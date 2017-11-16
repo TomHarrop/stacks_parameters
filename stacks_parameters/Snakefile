@@ -74,14 +74,12 @@ rule stacks:
     log:
         os.path.join(log_dir, 'stacks_m{m}_M{M}_n{n}.log')
     shell:
-        'echo \''
         'bin/denovo_map.pl '
-        '--samples={input.sample_dir} '
-        '--popmap={input.map} '
+        '--samples {input.sample_dir} '
+        '--popmap {input.map} '
         '-T {threads} '
         '-o {output.dir} '
         '-m {wildcards.m} '
         '-M {wildcards.M} '
         '-n {wildcards.n} '
         '&> {log} '
-        '\''
