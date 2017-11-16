@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
+import collections
 import csv
+import numpy
 import os
 import pathlib
 import re
@@ -9,14 +11,43 @@ import re
 # FUNCTIONS #
 #############
 
-def stacks_input_files(wildcards):
-    pass
-
-
+def select_random_samples(pop_map_file, n):
+    '''
+    Selects n individual samples from the first column of pop_map, weighted
+    by the number of samples per column
+    '''
+    # read the popmap   
+    with open(popmap, 'rt') as csvfile:
+        csvreader = csv.reader(csvfile, delimiter='\t')
+        samples = []
+        populations = []
+        for line in csvreader:
+            samples.append(line[0])
+            populations.append(line[1])
+    # count the number of samples per population and the desired probability of
+    # selecting an individual from that population
+    pop_counts = collections.Counter(populations)
+    pop_prob = 1 / len(pop_counts)
+    indiv_prob = {x: pop_prob / pop_counts[x] for x in pop_counts}
+    # populate the weight for each sample
+    sample_weights = {}
+    for sample in samples:
+        for key in indiv_prob:
+            if sample.lower().startswith(key):
+                sample_weights[sample] = indiv_prob[key]
+    # perform weighted sample choice
+    chosen_samples = numpy.random.choice(
+        list(sample_weights.keys()),
+        size=n,
+        p=list(sample_weights.values()))
+    # done!
+    return list(chosen_samples)
 
 ###########
 # GLOBALS #
 ###########
+
+numpy.random.seed(42)
 
 # from config
 outdir = config['outdir']
@@ -30,9 +61,7 @@ log_dir = config['log_dir']
 #########
 
 # parse popmap
-with open(popmap, 'rt') as csvfile:
-    csvreader = csv.reader(csvfile, delimiter='\t')
-    samples = list(x[0] for x in csvreader)
+
 
 # find all radtag files specified in the population map
 sample_dir_files = list((dirpath, filenames)
@@ -46,7 +75,8 @@ for dirpath, filenames in sample_dir_files:
         if samplename in samples:
             tag_files.append(os.path.join(dirpath, filename))
 
-print(tag_files)
+# choose three random subsets of 8 samples
+
 
 #########
 # RULES #
