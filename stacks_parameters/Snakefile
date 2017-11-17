@@ -23,7 +23,9 @@ def get_full_path(binary):
     return str(binary_path)
 
 
-def select_random_samples(pop_map_file, n):
+def select_random_samples(pop_map_file,
+                          n,
+                          seed=42):
     '''
     Selects n individual samples from the first column of pop_map_file,
     weighted by the number of samples per population
@@ -48,10 +50,12 @@ def select_random_samples(pop_map_file, n):
             if sample.lower().startswith(key):
                 sample_weights[sample] = indiv_prob[key]
     # perform weighted sample choice
-    chosen_samples = numpy.random.choice(
+    r = numpy.random.RandomState(seed)
+    chosen_samples = r.choice(
         list(sample_weights.keys()),
         size=n,
-        p=list(sample_weights.values()))
+        p=list(sample_weights.values()),
+        replace=False)
     # done!
     return list(chosen_samples)
 
@@ -60,11 +64,9 @@ def select_random_samples(pop_map_file, n):
 # GLOBALS #
 ###########
 
-numpy.random.seed(42)
-
 # sampling parameters
 replicate_n = 3
-rep_range = numpy.arange(1, replicate_n + 1)
+rep_range = list(numpy.arange(1, replicate_n + 1))
 sample_n = 8
 
 # from config
@@ -143,18 +145,23 @@ rule filter_samples:
         map = os.path.join(outdir, 'filtering/populations.txt')
     script:
         get_full_path('filter_populations_map.R')
-
-# random subsets
 rule subset_samples:
     input:
         popmap = os.path.join(outdir, 'filtering/populations.txt')
     output:
-        popmap = os.path.join(outdir, 'filtering/replicate_{rep}_popmap.txt')
+        expand(
+            os.path.join(outdir, 'filtering/replicate_{rep}_popmap.txt'),
+            rep=rep_range)
     run:
-        rep_samples = select_random_samples(input.popmap, sample_n)
-        with open(output.popmap, 'wt') as f:
-            for x in rep_samples:
-                f.write('{0}\tReplicate{1}\n'.format(x, wildcards.rep))
+        rep_samples = select_random_samples(
+            pop_map_file=input.popmap,
+            n=sample_n * replicate_n,
+            seed=42)
+        sample_split = numpy.array_split(rep_samples, replicate_n)
+        for i in range(0, replicate_n):
+            with open(output[i], 'wt') as f:
+                for x in sample_split[i]:
+                    f.write('{0}\tReplicate{1}\n'.format(x, str(i + 1)))
 
 # run stacks
 rule stacks:
