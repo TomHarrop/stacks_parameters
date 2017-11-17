@@ -37,6 +37,7 @@ filtered_samples <- samples_with_readcount[!is.na(reads)][reads > filter]
 
 fwrite(filtered_samples[, .(sample_name, population)],
        filtered_population_map,
-       col.names = FALSE)
+       col.names = FALSE,
+       sep = "\t")
        
 

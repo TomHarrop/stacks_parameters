@@ -82,6 +82,11 @@ def main():
         action='append',
         dest='targets',
         default=None)
+    parser.add_argument(
+        '--dryrun', '-n',
+        help='Do not execute anything',
+        action='store_true',
+        dest='dryrun')
     args = vars(parser.parse_args())
 
     # set up logging
@@ -100,6 +105,7 @@ def main():
         config=args,
         cores=args['threads'],
         targets=args['targets'],
+        dryrun=args['dryrun'],
         timestamp=True)
 
 
