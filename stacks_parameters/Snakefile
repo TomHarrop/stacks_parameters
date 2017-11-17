@@ -5,6 +5,7 @@ import csv
 import numpy
 import os
 import pathlib
+from pkg_resources import resource_filename
 import re
 
 #############
@@ -13,25 +14,25 @@ import re
 
 def select_random_samples(pop_map_file, n):
     '''
-    Selects n individual samples from the first column of pop_map, weighted
-    by the number of samples per column
+    Selects n individual samples from the first column of pop_map_file,
+    weighted by the number of samples per population
     '''
     # read the popmap   
-    with open(popmap, 'rt') as csvfile:
+    with open(pop_map_file, 'rt') as csvfile:
         csvreader = csv.reader(csvfile, delimiter='\t')
-        samples = []
-        populations = []
+        my_samples = []
+        my_populations = []
         for line in csvreader:
-            samples.append(line[0])
-            populations.append(line[1])
+            my_samples.append(line[0])
+            my_populations.append(line[1])
     # count the number of samples per population and the desired probability of
     # selecting an individual from that population
-    pop_counts = collections.Counter(populations)
+    pop_counts = collections.Counter(my_populations)
     pop_prob = 1 / len(pop_counts)
     indiv_prob = {x: pop_prob / pop_counts[x] for x in pop_counts}
     # populate the weight for each sample
     sample_weights = {}
-    for sample in samples:
+    for sample in my_samples:
         for key in indiv_prob:
             if sample.lower().startswith(key):
                 sample_weights[sample] = indiv_prob[key]
@@ -43,11 +44,16 @@ def select_random_samples(pop_map_file, n):
     # done!
     return list(chosen_samples)
 
+
 ###########
 # GLOBALS #
 ###########
 
 numpy.random.seed(42)
+
+# sampling parameters
+replicate_n = 3
+sample_n = 8
 
 # from config
 outdir = config['outdir']
@@ -56,17 +62,20 @@ popmap = config['popmap']
 max_threads = config['threads']
 log_dir = config['log_dir']
 
+
 #########
 # SETUP #
 #########
 
-# parse popmap
-
+# read the popmap
+with open(popmap, 'rt') as csvfile:
+    csvreader = csv.reader(csvfile, delimiter='\t')
+    samples = list(x[0] for x in csvreader)
 
 # find all radtag files specified in the population map
 sample_dir_files = list((dirpath, filenames)
-    for (dirpath, dirnames, filenames) 
-    in os.walk(sample_dir))        
+                        for (dirpath, dirnames, filenames)
+                        in os.walk(sample_dir))
 tag_files = []
 for dirpath, filenames in sample_dir_files:
     for filename in filenames:
@@ -74,8 +83,6 @@ for dirpath, filenames in sample_dir_files:
         samplename = re.sub(suffix, '', filename)
         if samplename in samples:
             tag_files.append(os.path.join(dirpath, filename))
-
-# choose three random subsets of 8 samples
 
 
 #########
@@ -91,6 +98,46 @@ rule targets:
         expand('output/stacks/m{m}/M{M}/n{n}',
                m=3, M=2, n=[1, 2, 3, 4, 5, 6, 7, 8, 9])
 
+# filter the samples with not many reads
+rule count_reads:
+    input:
+        tag_files = tag_files
+    output:
+        os.path.join(outdir, 'filtering/stats.txt')
+    log:
+        os.path.join(log_dir, 'statswrapper.log')
+    run:
+        in_line = ','.join(input.tag_files)
+        shell('statswrapper.sh '
+              'in={in_line} '
+              'out={output} '
+              '2> {log}')
+rule filter_samples:
+    input:
+        stats = os.path.join(outdir, 'filtering/stats.txt'),
+        popmap = popmap
+    params:
+        sample_dir = sample_dir,
+    output:
+        map = os.path.join(outdir, 'filtering/populations.txt')
+    script:
+        'filter_populations_map.R'
+
+# random subsets
+rule subset_samples:
+    input:
+        os.path.join(outdir, 'filtering/populations.txt')
+    output:
+        map = expand(
+            os.path.join(outdir, 'filtering/replicate_{n}_popmap.txt'),
+            n=list(numpy.arange(1, replicate_n + 1)))
+    run:
+        rep_samples = select_random_samples(popmap, sample_n)
+        with open(output.map, 'wt') as f:
+            for x in rep_samples:
+                f.write('{0}\tReplicate{1}\n'.format(x, wildcards.n))
+
+
 rule stacks:
     input:
         fq = tag_files,
@@ -105,6 +152,7 @@ rule stacks:
         os.path.join(log_dir, 'stacks_m{m}_M{M}_n{n}.log')
     shell:
         'bin/denovo_map.pl '
+        '--dry-run '
         '--samples {input.sample_dir} '
         '--popmap {input.map} '
         '-T {threads} '

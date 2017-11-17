@@ -37,6 +37,7 @@ setup(
         '': ['README.rst']
     },
     scripts=[
-        'stacks_parameters/src/util/stacks_catalog_to_fasta.py'
+        'stacks_parameters/src/util/stacks_catalog_to_fasta.py',
+        'stacks_parameters/src/filter_populations_map.R'
     ],
     zip_safe=False)

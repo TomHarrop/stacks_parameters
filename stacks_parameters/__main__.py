@@ -75,7 +75,13 @@ def main():
         type=int,
         dest='threads',
         default=default_threads)
-
+    parser.add_argument(
+        '--targets',
+        help='list of targets, e.g. rule or file names (default None)',
+        type=str,
+        action='append',
+        dest='targets',
+        default=None)
     args = vars(parser.parse_args())
 
     # set up logging
@@ -93,6 +99,7 @@ def main():
         snakefile=snakefile,
         config=args,
         cores=args['threads'],
+        targets=args['targets'],
         timestamp=True)
 
 

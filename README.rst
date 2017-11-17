@@ -7,6 +7,7 @@ Requirements
 ------------
 
 * ``python3`` 3.5 or newer with ``pip``
+* ``R`` packages ``data.table`` and ``ggplot2``
 
 Installation
 ------------
