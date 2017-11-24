@@ -41,7 +41,7 @@ filtered_samples <- samples_with_readcount[!is.na(reads)][reads > filter]
 hist_data <- samples_with_readcount[!is.na(reads),
                                     .(l4reads = log(reads, 4)),
                                     by = sample_name]
-bins <- 50
+bins <- 100
 qa <- hist_data[, seq(min(l4reads),
                       max(l4reads),
                       length.out = bins)]
@@ -70,7 +70,8 @@ gp <- ggplot(lhist_log4, aes(x = lbin, y = count)) +
     scale_x_continuous(labels = function(x) 4^x) +
     ylab("Sample count") + xlab("Number of reads") +
     ggtitle(parse(text = gt)) +
-    geom_vline(xintercept = filter_plot) +
+    geom_vline(xintercept = filter_plot,
+               linetype = 2) +
     geom_col()
 
 # write output
