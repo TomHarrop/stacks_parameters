@@ -142,7 +142,8 @@ rule filter_samples:
     params:
         sample_dir = sample_dir,
     output:
-        map = os.path.join(outdir, 'filtering/populations.txt')
+        map = os.path.join(outdir, 'filtering/populations.txt'),
+        plot = os.path.join(outdir, 'filtering/read_count_histogram.pdf')
     script:
         get_full_path('filter_populations_map.R')
 rule subset_samples:
@@ -174,7 +175,7 @@ rule stacks:
     params:
         wd = 'output/stacks/m{m}/M{M}/n{n}/rep{rep}'
     threads:
-        max_threads
+        sample_n
     log:
         os.path.join(log_dir, 'stacks_m{m}_M{M}_n{n}_rep{rep}.log')
     shell:
