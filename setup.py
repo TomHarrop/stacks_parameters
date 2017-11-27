@@ -22,6 +22,7 @@ setup(
     license='GPL-3',
     packages=find_packages(),
     install_requires=[
+        'pandas>=0.21.0',
         'numpy>=1.13.3',
         'snakemake>=4.0.0'
     ],
