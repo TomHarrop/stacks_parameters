@@ -171,7 +171,18 @@ rule stacks:
         sample_dir = sample_dir,
         map = os.path.join(outdir, 'filtering/replicate_{rep}_popmap.txt')
     output:
-        logfile = 'output/stacks/m{m}/M{M}/n{n}/rep{rep}/denovo_map.log'
+        populations_sumstats = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.sumstats.tsv'),
+        populations_haplotypes = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.haplotypes.tsv'),
+        dm_log = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}/denovo_map.log'),
+        pop_log = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.log')
     params:
         wd = 'output/stacks/m{m}/M{M}/n{n}/rep{rep}'
     threads:
