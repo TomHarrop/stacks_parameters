@@ -116,7 +116,6 @@ rule optim_Mm:
                n=0,
                rep=rep_range)
 
-
 # filter the samples with not many reads
 rule count_reads:
     input:
@@ -194,4 +193,5 @@ rule stacks:
         '-m {wildcards.m} '
         '-M {wildcards.M} '
         '-n {wildcards.n} '
+        '-X "populations:-r 0.8"'
         '&> {log} '
