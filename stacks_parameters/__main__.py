@@ -46,9 +46,28 @@ def print_graph(snakefile, config, dag_prefix):
             file.write(output)
 
 
-def main():
+def parse_commandline():
     # command line arguments
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description=('Parameter optimization for Stacks'))
+    parser.add_argument(
+        '--mode',
+        help=('''Which optimisation step to run.
+              setup: count input reads, filter and subset samples;
+              optim_Mm: optimise M and m with n == 0;
+              optim_n: optimise n for chosen M and m.
+              Overridden by `--targets`'''),
+        choices=['setup', 'optim_Mm', 'optim_n'],
+        default=None,
+        dest='mode')
+    parser.add_argument(
+        '--targets',
+        help=('list of targets, e.g. rule or file names (default None). '
+              'Overrides `--mode`'),
+        type=str,
+        action='append',
+        dest='targets',
+        default=None)
     parser.add_argument(
         '--samples',
         required=True,
@@ -76,19 +95,27 @@ def main():
         dest='threads',
         default=default_threads)
     parser.add_argument(
-        '--targets',
-        help='list of targets, e.g. rule or file names (default None)',
-        type=str,
-        action='append',
-        dest='targets',
-        default=None)
-    parser.add_argument(
         '--dryrun', '-n',
         help='Do not execute anything',
         action='store_true',
         dest='dryrun')
     args = vars(parser.parse_args())
 
+    # check the arguments
+    if args['mode'] and args['targets']:
+        parser.error('--mode is overridden by --targets')
+    if args['mode'] == 'setup':
+        args['targets'] = ['subset_samples']
+    elif args['mode'] == 'optim_Mm':
+        args['targets'] = ['optim_Mm']
+    elif args['mode'] == 'optim_n':
+        args['targets'] = ['optim_n']
+
+    return args
+
+def main():
+    args = parse_commandline()
+    print(args)
     # set up logging
     outdir = args['outdir']
     log_dir = os.path.join(outdir, 'logs')
