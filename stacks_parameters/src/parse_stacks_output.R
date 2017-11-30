@@ -18,7 +18,7 @@ FindSampleResultsFiles <- function(stacks_dir, samples) {
     names(my_samples) <- my_samples
     my_sample_files <- lapply(my_samples, function(x)
         list.files(stacks_dir,
-                   pattern = paste0(x, ".")))
+                   pattern = paste0(x, "\\.")))
     my_parsed_files <- lapply(my_sample_files, function(x)    
         data.table(
             tag_file = grep("tags.tsv.gz$", x, value = TRUE),
@@ -26,7 +26,7 @@ FindSampleResultsFiles <- function(stacks_dir, samples) {
             snp_file = grep("snps.tsv.gz$", x, value = TRUE)))
     rbindlist(my_parsed_files, idcol = "sample")}
 
-ParseIndividualTags <- function(stacks_dir, tag_file) {
+ParseIndividualLoci <- function(stacks_dir, tag_file) {
     # Number of assembled loci:
     # for i in *.tags.tsv.gz; do zcat $i | cut -f 3 | tail -n 1; done
     my_tags <- fread(paste0("zgrep -v '^#' ", stacks_dir, "/", tag_file),
@@ -35,7 +35,7 @@ ParseIndividualTags <- function(stacks_dir, tag_file) {
     my_tags[, length(unique(V3))]
 }
 
-ParseIndividualTags <- function(stacks_dir, allele_file) {
+ParseIndividualPolymorphicLoci <- function(stacks_dir, allele_file) {
     # Number of polymorphic loci:
     # for i in *.alleles.tsv.gz; do zcat $i | grep -v "^#" | cut -f 3 | sort | uniq | wc -l; done
     my_alleles <- fread(paste0("zgrep -v '^#' ", stacks_dir, "/", allele_file),
@@ -98,14 +98,16 @@ ParsePopulationsStats <- function(stacks_dir){
         polymorphic_loci = my_polymorphic_loci,
         snps = my_snps
     )
-    }
+}
 
 ###########
 # GLOBALS #
 ###########
 
-popmap <- "output/filtering/replicate_3_popmap.txt"
-stacks_dir <- "test/rep3"
+popmap <- "output/filtering/replicate_1_popmap.txt"
+stacks_dir <- "test"
+output_pop_stats <- "test/pop_stats.csv"
+output_sample_stats <- "test/sample_stats.csv"
 
 ########
 # MAIN #
@@ -122,12 +124,17 @@ sample_files <- FindSampleResultsFiles(stacks_dir, all_samples)
 
 # run the counts
 sample_stats <- sample_files[
-    , .(assembled_loci = ParseIndividualTags(stacks_dir,
-                                             tag_file),
-        polymorphic_loci = ParseIndividualTags(stacks_dir,
-                                               alleles_file),
-        snps = ParseIndividualSNPs(stacks_dir,
-                                   snp_file)),
+    , .(assembled_loci =
+            ParseIndividualLoci(stacks_dir = stacks_dir,
+                                tag_file = tag_file),
+        polymorphic_loci =
+            ParseIndividualPolymorphicLoci(stacks_dir = stacks_dir,
+                                           allele_file = alleles_file),
+        snps = ParseIndividualSNPs(stacks_dir = stacks_dir,
+                                   snp_file = snp_file)),
     by = sample]
 
+# write output
+fwrite(population_stats, output_pop_stats)
+fwrite(sample_stats, output_sample_stats)
 

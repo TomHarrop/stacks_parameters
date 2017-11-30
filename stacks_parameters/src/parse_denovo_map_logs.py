@@ -47,9 +47,17 @@ def parse_denovo_map_log(dm_log):
 
 
 def main():
-    dm_log = 'test/rep3/denovo_map.log'
-    parse_denovo_map_log(dm_log)
+    # globals
+    dm_log = 'test/denovo_map.log'
+    stats_output = 'test/coverage_stats.csv'
 
+    # parse the stats
+    coverage_stats = parse_denovo_map_log(dm_log)
+
+    # print the results
+    coverage_stats.to_csv(
+        stats_output,
+        index=False)
 
 if __name__ == '__main__':
     main()

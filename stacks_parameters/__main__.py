@@ -53,8 +53,8 @@ def parse_commandline():
     parser.add_argument(
         '--mode',
         help=('''Which optimisation step to run.
-              setup: count input reads, filter and subset samples;
-              optim_Mm: optimise M and m with n == 0;
+              setup: count input reads, filter and subset samples.
+              optim_Mm: optimise M and m with n == 0.
               optim_n: optimise n for chosen M and m.
               Overridden by `--targets`'''),
         choices=['setup', 'optim_Mm', 'optim_n'],
@@ -62,7 +62,8 @@ def parse_commandline():
         dest='mode')
     parser.add_argument(
         '--targets',
-        help=('list of targets, e.g. rule or file names (default None). '
+        help=('Targets, e.g. rule or file names (default None). '
+              'Specify --targets once for each target. '
               'Overrides `--mode`'),
         type=str,
         action='append',
@@ -103,7 +104,7 @@ def parse_commandline():
 
     # check the arguments
     if args['mode'] and args['targets']:
-        parser.error('--mode is overridden by --targets')
+        parser.error('Don\'t provide --mode and --targets')
     if args['mode'] == 'setup':
         args['targets'] = ['subset_samples']
     elif args['mode'] == 'optim_Mm':
