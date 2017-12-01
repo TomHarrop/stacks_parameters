@@ -65,7 +65,7 @@ def select_random_samples(pop_map_file,
 ###########
 
 # sampling parameters
-replicate_n = 1
+replicate_n = 2
 rep_range = list(numpy.arange(1, replicate_n + 1))
 sample_n = 16
 
@@ -239,13 +239,13 @@ rule stacks_Mm_combine_pop:
                             'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
                m=[3, 4, 5, 6, 7],
                M=2,
-               n=0,
+               n=1,
                rep=rep_range),
         expand(os.path.join(outdir,
                             'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
                m=3,
                M=[1, 2, 3, 4, 5, 6, 7, 8],
-               n=0,
+               n=1,
                rep=rep_range)
     output:
         combined = os.path.join(
@@ -260,13 +260,13 @@ rule stacks_Mm_combine_cov:
                             'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
                m=[3, 4, 5, 6, 7],
                M=2,
-               n=0,
+               n=1,
                rep=rep_range),
         expand(os.path.join(outdir,
                             'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
                m=3,
                M=[1, 2, 3, 4, 5, 6, 7, 8],
-               n=0,
+               n=1,
                rep=rep_range)
     output:
         combined = os.path.join(
@@ -281,13 +281,13 @@ rule stacks_Mm_combine_sample:
                             'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
                m=[3, 4, 5, 6, 7],
                M=2,
-               n=0,
+               n=1,
                rep=rep_range),
         expand(os.path.join(outdir,
                             'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
                m=3,
                M=[1, 2, 3, 4, 5, 6, 7, 8],
-               n=0,
+               n=1,
                rep=rep_range)
     output:
         combined = os.path.join(
