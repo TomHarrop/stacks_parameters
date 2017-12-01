@@ -7,7 +7,7 @@ library(data.table)
 # GLOBALS #
 ###########
 
-cov_stats_file <- "test/coverage_stats.csv"
+cov_stats_file <- "output/stats_Mm/covstats_combined.csv"
 
 ########
 # MAIN #
@@ -16,17 +16,15 @@ cov_stats_file <- "test/coverage_stats.csv"
 # read stats
 coverage_stats <- fread(cov_stats_file)
 
-# melt
-coverage_pd <- melt(coverage_stats, id.vars = c("sample"))
-
-# dummy m
-coverage_pd <- rbind(copy(coverage_pd)[, m := "m1"],
-                     copy(coverage_pd)[, m := "m2"])
+# melt once
+coverage_pd <- melt(coverage_stats,
+                    id.vars = c("m", "M", "n", "rep"),
+                    measure.vars = c("unmerged_cov", "merged_cov"))
 
 
-# plot
+# plot over m with M=M2, e.g. coverage_pd[, length(unique(m)), by = M]
 Set1 <- RColorBrewer::brewer.pal(9, "Set1")
-ggplot(coverage_pd, aes(x = m,
+ggplot(coverage_pd[M == "M2"], aes(x = m,
                         y = value,
                         fill = variable)) +
     theme(strip.placement = "outside",

@@ -105,18 +105,15 @@ for dirpath, filenames in sample_dir_files:
 
 rule optim_Mm:
     input:
-        expand(os.path.join(outdir,
-                            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
-               m=[3, 4, 5, 6, 7],
-               M=2,
-               n=0,
-               rep=rep_range),
-        expand(os.path.join(outdir,
-                            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
-               m=3,
-               M=[1, 2, 3, 4, 5, 6, 7, 8],
-               n=0,
-               rep=rep_range)
+        os.path.join(
+            outdir,
+            'stats_Mm/samplestats_combined.csv'),
+        os.path.join(
+            outdir,
+            'stats_Mm/popstats_combined.csv'),
+        os.path.join(
+            outdir,
+            'stats_Mm/covstats_combined.csv')
 
 # filter the samples with not many reads
 rule count_reads:
@@ -199,14 +196,25 @@ rule stacks_Mm:
         '&> {log} '
 
 # get stats from the stacks runs
-rule stacks_Mm_parse_stats:
+rule stacks_Mm_cov_stats:
+    input:
+        dm_log = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}/denovo_map.log')
+    threads:
+        1
+    output:
+        coverage_stats = os.path.join(
+            outdir,
+            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv')
+    script:
+        get_full_path('parse_denovo_map_logs.py')
+
+rule stacks_Mm_sample_stats:
     input:
         populations_sumstats = os.path.join(
             outdir,
             'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.sumstats.tsv'),
-        dm_log = os.path.join(
-            outdir,
-            'stacks/m{m}/M{M}/n{n}/rep{rep}/denovo_map.log'),
         map = os.path.join(outdir, 'filtering/replicate_{rep}_popmap.txt')
     params:
         stats_dir = os.path.join(
@@ -215,18 +223,75 @@ rule stacks_Mm_parse_stats:
     threads:
         1
     output:
-        coverage_stats = os.path.join(
-            outdir,
-            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
         pop_stats = os.path.join(
             outdir,
             'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
         sample_stats = os.path.join(
             outdir,
             'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv')
-    run:
-        script(get_full_path('parse_denovo_map_logs.py'))
-        script(get_full_path('parse_stacks_output.R'))
+    script:
+        get_full_path('parse_stacks_output.R')
 
 
+rule stacks_Mm_combine_pop:
+    input:
+        expand(os.path.join(outdir,
+                            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
+               m=[3, 4, 5, 6, 7],
+               M=2,
+               n=0,
+               rep=rep_range),
+        expand(os.path.join(outdir,
+                            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
+               m=3,
+               M=[1, 2, 3, 4, 5, 6, 7, 8],
+               n=0,
+               rep=rep_range)
+    output:
+        combined = os.path.join(
+            outdir,
+            'stats_Mm/popstats_combined.csv')
+    script:
+        get_full_path('combine_stacks_data.R')
 
+rule stacks_Mm_combine_cov:
+    input:
+        expand(os.path.join(outdir,
+                            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
+               m=[3, 4, 5, 6, 7],
+               M=2,
+               n=0,
+               rep=rep_range),
+        expand(os.path.join(outdir,
+                            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
+               m=3,
+               M=[1, 2, 3, 4, 5, 6, 7, 8],
+               n=0,
+               rep=rep_range)
+    output:
+        combined = os.path.join(
+            outdir,
+            'stats_Mm/covstats_combined.csv')
+    script:
+        get_full_path('combine_stacks_data.R')
+
+rule stacks_Mm_combine_sample:
+    input:
+        expand(os.path.join(outdir,
+                            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
+               m=[3, 4, 5, 6, 7],
+               M=2,
+               n=0,
+               rep=rep_range),
+        expand(os.path.join(outdir,
+                            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
+               m=3,
+               M=[1, 2, 3, 4, 5, 6, 7, 8],
+               n=0,
+               rep=rep_range)
+    output:
+        combined = os.path.join(
+            outdir,
+            'stats_Mm/samplestats_combined.csv')
+    script:
+        get_full_path('combine_stacks_data.R')
