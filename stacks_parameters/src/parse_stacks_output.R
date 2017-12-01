@@ -57,7 +57,7 @@ ParsePopulationsStats <- function(stacks_dir){
     # Number of loci
     # cat batch_1.haplotypes.tsv | sed '1d' | wc -l 
     # Reads every locus regardless of population (and pop map specified) don't
-    # have to provide ‘defaultpop'
+    # have to provide 'defaultpop'
     # Polymorphic loci
     # cat batch_1.sumstats.tsv | grep -v "^#" | cut -f 2 | sort -n | uniq | wc -l 
     # Only takes the locus ID but by sorting them means no need to specify a
