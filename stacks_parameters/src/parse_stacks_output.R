@@ -46,7 +46,7 @@ ParseIndividualPolymorphicLoci <- function(stacks_dir, allele_file) {
 
 ParseIndividualSNPs <- function(stacks_dir, snp_file) {
     # Number of SNPs:
-    # for i in *.snps.tsv.gz; do zcat $i | grep -v "^#" | cut -f 5 | grep -c "“E"; done
+    # for i in *.snps.tsv.gz; do zcat $i | grep -v "^#" | cut -f 5 | grep -c "E"; done
     my_snps <- fread(paste0("zgrep -v '^#' ", stacks_dir, "/", snp_file),
                      header = FALSE,
                      sep = "\t")
