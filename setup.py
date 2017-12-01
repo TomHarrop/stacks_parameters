@@ -13,7 +13,7 @@ def readme():
 
 setup(
     name='stacks_parameters',
-    version='0.0.2',
+    version='0.0.3',
     description='Parameter optimization for Stacks',
     long_description=readme(),
     url='https://github.com/TomHarrop/stacks_parameters',
@@ -39,6 +39,8 @@ setup(
     },
     scripts=[
         'stacks_parameters/src/util/stacks_catalog_to_fasta.py',
-        'stacks_parameters/src/filter_populations_map.R'
+        'stacks_parameters/src/filter_populations_map.R',
+        'stacks_parameters/src/parse_denovo_map_logs.py',
+        'stacks_parameters/src/parse_stacks_output.R'
     ],
     zip_safe=False)

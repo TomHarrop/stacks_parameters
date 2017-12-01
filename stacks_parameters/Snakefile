@@ -105,12 +105,14 @@ for dirpath, filenames in sample_dir_files:
 
 rule optim_Mm:
     input:
-        expand('output/stacks/m{m}/M{M}/n{n}/rep{rep}/denovo_map.log',
+        expand(os.path.join(outdir,
+                            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
                m=[3, 4, 5, 6, 7],
                M=2,
                n=0,
                rep=rep_range),
-        expand('output/stacks/m{m}/M{M}/n{n}/rep{rep}/denovo_map.log',
+        expand(os.path.join(outdir,
+                            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
                m=3,
                M=[1, 2, 3, 4, 5, 6, 7, 8],
                n=0,
@@ -160,7 +162,7 @@ rule subset_samples:
                     f.write('{0}\tReplicate{1}\n'.format(x, str(i + 1)))
 
 # run stacks
-rule stacks:
+rule stacks_Mm:
     input:
         fq = tag_files,
         sample_dir = sample_dir,
@@ -195,3 +197,36 @@ rule stacks:
         '-n {wildcards.n} '
         '-X "populations:-r 0.8"'
         '&> {log} '
+
+# get stats from the stacks runs
+rule stacks_Mm_parse_stats:
+    input:
+        populations_sumstats = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.sumstats.tsv'),
+        dm_log = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}/denovo_map.log'),
+        map = os.path.join(outdir, 'filtering/replicate_{rep}_popmap.txt')
+    params:
+        stats_dir = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}')
+    threads:
+        1
+    output:
+        coverage_stats = os.path.join(
+            outdir,
+            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
+        pop_stats = os.path.join(
+            outdir,
+            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
+        sample_stats = os.path.join(
+            outdir,
+            'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv')
+    run:
+        script(get_full_path('parse_denovo_map_logs.py'))
+        script(get_full_path('parse_stacks_output.R'))
+
+
+

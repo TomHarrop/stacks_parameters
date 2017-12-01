@@ -48,8 +48,8 @@ def parse_denovo_map_log(dm_log):
 
 def main():
     # globals
-    dm_log = 'test/denovo_map.log'
-    stats_output = 'test/coverage_stats.csv'
+    dm_log = snakemake.input['dm_log']
+    stats_output = snakemake.output['coverage_stats']
 
     # parse the stats
     coverage_stats = parse_denovo_map_log(dm_log)

@@ -104,10 +104,10 @@ ParsePopulationsStats <- function(stacks_dir){
 # GLOBALS #
 ###########
 
-popmap <- "output/filtering/replicate_1_popmap.txt"
-stacks_dir <- "test"
-output_pop_stats <- "test/pop_stats.csv"
-output_sample_stats <- "test/sample_stats.csv"
+popmap <- snakemake@input[["map"]]
+stacks_dir <- snakemake@params[["stats_dir"]]
+output_pop_stats <- snakemake@output[["pop_stats"]]
+output_sample_stats <- snakemake@output[["sample_stats"]]
 
 ########
 # MAIN #
