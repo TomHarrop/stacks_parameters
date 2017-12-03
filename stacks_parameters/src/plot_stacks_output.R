@@ -11,6 +11,10 @@ sample_stats_file <- snakemake@input[["samplestats"]]
 M_plot <- snakemake@output[["M"]]
 m_plot <- snakemake@output[["m"]]
 
+# dev
+#pop_stats_file <- "output/stats_Mm/popstats_combined.csv"
+#sample_stats_file <- "output/stats_Mm/samplestats_combined.csv"
+
 ########
 # MAIN #
 ########
@@ -18,14 +22,16 @@ m_plot <- snakemake@output[["m"]]
 pop_stats <- fread(pop_stats_file)
 sample_stats <- fread(sample_stats_file)
 
-# pick the winner
-pop_stats[M == "M2"][which.max(polymorphic_loci)]
-pop_stats[m == "m3"][which.max(polymorphic_loci)]
-
 # what were the defaults
 default_M <- pop_stats[, length(unique(m)), by = M][which.max(V1), M]
 default_m <- pop_stats[, length(unique(M)), by = m][which.max(V1), m]
 default_n <- pop_stats[, length(unique(m)), by = n][which.max(V1), n]
+
+# pick the winners
+max_m <- pop_stats[M == default_M, mean(unique(polymorphic_loci)), by = m][
+    which.max(V1), m]
+max_M <- pop_stats[m == default_m, mean(unique(polymorphic_loci)), by = M][
+    which.max(V1), M]
 
 # go long
 sample_pd <- melt(sample_stats,
@@ -56,10 +62,14 @@ d <- position_dodge(width = 0.5)
 label_func <- function(x) {gsub("[[:alpha:]]", "", x)}
 m_lt <- paste0("italic('M')=='",
                label_func(default_M),
-               ",' ~ italic('n')=='", label_func(default_n), "'")
+               ",' ~ italic('n')=='", label_func(default_n), ". ",
+               "Maximum number of polymorphic loci at' ~ italic('r')=='0.8:'",
+               "~ italic('m')==", label_func(max_m))
 M_lt <- paste0("italic('m')=='",
                label_func(default_m),
-               ",' ~ italic('n')=='", label_func(default_n), "'")
+               ",' ~ italic('n')=='", label_func(default_n), ". ",
+               "Maximum number of polymorphic loci at' ~ italic('r')=='0.8:'",
+               "~ italic('M')==", label_func(max_M))
 
 # plot over m
 mp <- ggplot(sample_pd[M == default_M], aes(x = m,

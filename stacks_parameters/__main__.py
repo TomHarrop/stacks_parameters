@@ -70,6 +70,20 @@ def parse_commandline():
         dest='targets',
         default=None)
     parser.add_argument(
+        '-m',
+        help=('Optimised m from optim_Mm. Minimum number of identical, '
+              'raw reads required to create a stack.'),
+        type=str,
+        dest='m',
+        default=None)
+    parser.add_argument(
+        '-M',
+        help=('Optimised M from optim_Mm. Number of mismatches allowed '
+              'between loci when processing a single individual.'),
+        type=str,
+        dest='M',
+        default=None)
+    parser.add_argument(
         '--samples',
         required=True,
         help='path to the directory containing the samples reads files',
@@ -111,6 +125,9 @@ def parse_commandline():
         args['targets'] = ['optim_Mm']
     elif args['mode'] == 'optim_n':
         args['targets'] = ['optim_n']
+        # check that M and m are provided if we're going to optimise n
+        if not (args['m'] and args['M']):
+            parser.error('Optimised m and M values are required to optimise n')
 
     return args
 

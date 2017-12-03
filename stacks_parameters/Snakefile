@@ -99,31 +99,9 @@ for dirpath, filenames in sample_dir_files:
             tag_files.append(os.path.join(dirpath, filename))
 
 
-#########
-# RULES #
-#########
-
-rule optim_Mm:
-    input:
-        os.path.join(
-            outdir,
-            'stats_Mm/samplestats_combined.csv'),
-        os.path.join(
-            outdir,
-            'stats_Mm/popstats_combined.csv'),
-        os.path.join(
-            outdir,
-            'stats_Mm/covstats_combined.csv'),
-        os.path.join(
-            outdir,
-            'stats_Mm/coverage_vs_m.pdf'),
-        os.path.join(
-            outdir,
-            'stats_Mm/loci_vs_M.pdf'),
-        os.path.join(
-            outdir,
-            'stats_Mm/loci_vs_m.pdf')
-
+#######################
+# mode == setup RULES #
+#######################
 
 # filter the samples with not many reads
 rule count_reads:
@@ -150,6 +128,7 @@ rule filter_samples:
         plot = os.path.join(outdir, 'filtering/read_count_histogram.pdf')
     script:
         get_full_path('filter_populations_map.R')
+
 rule subset_samples:
     input:
         popmap = os.path.join(outdir, 'filtering/populations.txt')
@@ -168,42 +147,31 @@ rule subset_samples:
                 for x in sample_split[i]:
                     f.write('{0}\tReplicate{1}\n'.format(x, str(i + 1)))
 
-# run stacks
-rule stacks_Mm:
+##########################
+# mode == optim_Mm RULES #
+##########################
+
+rule optim_Mm:
     input:
-        fq = tag_files,
-        sample_dir = sample_dir,
-        map = os.path.join(outdir, 'filtering/replicate_{rep}_popmap.txt')
-    output:
-        populations_sumstats = os.path.join(
+        os.path.join(
             outdir,
-            'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.sumstats.tsv'),
-        populations_haplotypes = os.path.join(
+            'stats_Mm/samplestats_combined.csv'),
+        os.path.join(
             outdir,
-            'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.haplotypes.tsv'),
-        dm_log = os.path.join(
+            'stats_Mm/popstats_combined.csv'),
+        os.path.join(
             outdir,
-            'stacks/m{m}/M{M}/n{n}/rep{rep}/denovo_map.log'),
-        pop_log = os.path.join(
+            'stats_Mm/covstats_combined.csv'),
+        os.path.join(
             outdir,
-            'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.log')
-    params:
-        wd = 'output/stacks/m{m}/M{M}/n{n}/rep{rep}'
-    threads:
-        sample_n
-    log:
-        os.path.join(log_dir, 'stacks_m{m}_M{M}_n{n}_rep{rep}.log')
-    shell:
-        'bin/denovo_map.pl '
-        '--samples {input.sample_dir} '
-        '--popmap {input.map} '
-        '-T {threads} '
-        '-o {params.wd} '
-        '-m {wildcards.m} '
-        '-M {wildcards.M} '
-        '-n {wildcards.n} '
-        '-X "populations:-r 0.8"'
-        '&> {log} '
+            'stats_Mm/coverage_vs_m.pdf'),
+        os.path.join(
+            outdir,
+            'stats_Mm/loci_vs_M.pdf'),
+        os.path.join(
+            outdir,
+            'stats_Mm/loci_vs_m.pdf')
+
 
 # get stats from the stacks runs
 rule stacks_Mm_cov_stats:
@@ -335,3 +303,210 @@ rule Mm_plot_loci:
             'stats_Mm/loci_vs_m.pdf')
     script:
         get_full_path('plot_stacks_output.R')        
+
+#########################
+# mode == optim_n RULES #
+#########################
+
+rule optim_n:
+    input:
+        os.path.join(
+            outdir,
+            'stats_n/samplestats_combined.csv'),
+        os.path.join(
+            outdir,
+            'stats_n/popstats_combined.csv'),
+        os.path.join(
+            outdir,
+            'stats_n/covstats_combined.csv'),
+        os.path.join(
+            outdir,
+            'stats_n/coverage_vs_m.pdf'),
+        os.path.join(
+            outdir,
+            'stats_n/loci_vs_M.pdf'),
+        os.path.join(
+            outdir,
+            'stats_n/loci_vs_m.pdf')
+
+rule stacks_n_cov_stats:
+    input:  
+        dm_log = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}/denovo_map.log')
+    threads:
+        1
+    output:
+        coverage_stats = os.path.join(
+            outdir,
+            'stats_n/m{m}_M{M}_n{n}_rep{rep}_coverage.csv')
+    script:
+        get_full_path('parse_denovo_map_logs.py')
+
+rule stacks_n_sample_stats:
+    input:
+        populations_sumstats = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.sumstats.tsv'),
+        map = os.path.join(outdir, 'filtering/replicate_{rep}_popmap.txt')
+    params:
+        stats_dir = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}')
+    threads:
+        1
+    output:
+        pop_stats = os.path.join(
+            outdir,
+            'stats_n/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
+        sample_stats = os.path.join(
+            outdir,
+            'stats_n/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv')
+    script:
+        get_full_path('parse_stacks_output.R')
+
+rule stacks_n_combine_pop:
+    input:
+        expand(os.path.join(outdir,
+                            'stats_n/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
+               m=config['m'],
+               M=config['M'],
+               n=[str(int(config['M']) - 1),
+                  config['M'],
+                  str(int(config['M']) + 1)],
+               rep=rep_range),
+        expand(os.path.join(outdir,
+                            'stats_n/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
+               m=config['m'],
+               M=config['M'],
+               n=[str(int(config['M']) - 1),
+                  config['M'],
+                  str(int(config['M']) + 1)],
+               rep=rep_range)
+    output:
+        combined = os.path.join(
+            outdir,
+            'stats_n/popstats_combined.csv')
+    script:
+        get_full_path('combine_stacks_data.R')
+
+rule stacks_n_combine_cov:
+    input:
+        expand(os.path.join(outdir,
+                            'stats_n/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
+               m=config['m'],
+               M=config['M'],
+               n=[str(int(config['M']) - 1),
+                  config['M'],
+                  str(int(config['M']) + 1)],
+               rep=rep_range),
+        expand(os.path.join(outdir,
+                            'stats_n/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
+               m=config['m'],
+               M=config['M'],
+               n=[str(int(config['M']) - 1),
+                  config['M'],
+                  str(int(config['M']) + 1)],
+               rep=rep_range)
+    output:
+        combined = os.path.join(
+            outdir,
+            'stats_n/covstats_combined.csv')
+    script:
+        get_full_path('combine_stacks_data.R')
+
+rule stacks_n_combine_sample:
+    input:
+        expand(os.path.join(outdir,
+                            'stats_n/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
+               m=config['m'],
+               M=config['M'],
+               n=[str(int(config['M']) - 1),
+                  config['M'],
+                  str(int(config['M']) + 1)],
+               rep=rep_range),
+        expand(os.path.join(outdir,
+                            'stats_n/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
+               m=config['m'],
+               M=config['M'],
+               n=[str(int(config['M']) - 1),
+                  config['M'],
+                  str(int(config['M']) + 1)],
+               rep=rep_range)
+    output:
+        combined = os.path.join(
+            outdir,
+            'stats_n/samplestats_combined.csv')
+    script:
+        get_full_path('combine_stacks_data.R')
+
+rule n_plot_coverage:
+    input:
+        covstats = os.path.join(
+            outdir,
+            'stats_n/covstats_combined.csv')
+    output:
+        pdf = os.path.join(
+            outdir,
+            'stats_n/coverage_vs_m.pdf')
+    script:
+        '' # need to write script to plot over n
+
+rule n_plot_loci:
+    input:
+        popstats = os.path.join(
+            outdir,
+            'stats_n/popstats_combined.csv'),
+        samplestats = os.path.join(
+            outdir,
+            'stats_n/samplestats_combined.csv')
+    output:
+        M = os.path.join(
+            outdir,
+            'stats_n/loci_vs_M.pdf'),
+        m = os.path.join(
+            outdir,
+            'stats_n/loci_vs_m.pdf')
+    script:
+        '' # need to write script to plot over n
+
+################
+# SHARED RULES #
+################
+
+# run stacks
+rule stacks:
+    input:
+        fq = tag_files,
+        sample_dir = sample_dir,
+        map = os.path.join(outdir, 'filtering/replicate_{rep}_popmap.txt')
+    output:
+        populations_sumstats = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.sumstats.tsv'),
+        populations_haplotypes = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.haplotypes.tsv'),
+        dm_log = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}/denovo_map.log'),
+        pop_log = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.log')
+    params:
+        wd = 'output/stacks/m{m}/M{M}/n{n}/rep{rep}'
+    threads:
+        sample_n
+    log:
+        os.path.join(log_dir, 'stacks_m{m}_M{M}_n{n}_rep{rep}.log')
+    shell:
+        'bin/denovo_map.pl '
+        '--samples {input.sample_dir} '
+        '--popmap {input.map} '
+        '-T {threads} '
+        '-o {params.wd} '
+        '-m {wildcards.m} '
+        '-M {wildcards.M} '
+        '-n {wildcards.n} '
+        '-X "populations:-r 0.8"'
+        '&> {log} '
