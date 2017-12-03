@@ -113,7 +113,17 @@ rule optim_Mm:
             'stats_Mm/popstats_combined.csv'),
         os.path.join(
             outdir,
-            'stats_Mm/covstats_combined.csv')
+            'stats_Mm/covstats_combined.csv'),
+        os.path.join(
+            outdir,
+            'stats_Mm/coverage_vs_m.pdf'),
+        os.path.join(
+            outdir,
+            'stats_Mm/loci_vs_M.pdf'),
+        os.path.join(
+            outdir,
+            'stats_Mm/loci_vs_m.pdf')
+
 
 # filter the samples with not many reads
 rule count_reads:
@@ -295,3 +305,33 @@ rule stacks_Mm_combine_sample:
             'stats_Mm/samplestats_combined.csv')
     script:
         get_full_path('combine_stacks_data.R')
+
+rule Mm_plot_coverage:
+    input:
+        covstats = os.path.join(
+            outdir,
+            'stats_Mm/covstats_combined.csv')
+    output:
+        pdf = os.path.join(
+            outdir,
+            'stats_Mm/coverage_vs_m.pdf')
+    script:
+        get_full_path('plot_coverage.R')        
+
+rule Mm_plot_loci:
+    input:
+        popstats = os.path.join(
+            outdir,
+            'stats_Mm/popstats_combined.csv'),
+        samplestats = os.path.join(
+            outdir,
+            'stats_Mm/samplestats_combined.csv')
+    output:
+        M = os.path.join(
+            outdir,
+            'stats_Mm/loci_vs_M.pdf'),
+        m = os.path.join(
+            outdir,
+            'stats_Mm/loci_vs_m.pdf')
+    script:
+        get_full_path('plot_stacks_output.R')        
