@@ -44,5 +44,6 @@ setup(
         'stacks_parameters/src/parse_stacks_output.R',
         'stacks_parameters/src/combine_stacks_data.R',
         'stacks_parameters/src/plot_coverage.R',
-        'stacks_parameters/src/plot_stacks_output.R'],
+        'stacks_parameters/src/plot_stacks_output.R',
+        'stacks_parameters/src/plot_optim_n_output.R'],
     zip_safe=False)

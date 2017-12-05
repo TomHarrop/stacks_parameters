@@ -24,6 +24,7 @@ def print_graph(snakefile, config, dag_prefix):
     snakemake.snakemake(
         snakefile,
         config=config,
+        targets=config['targets'],
         dryrun=True,
         printdag=True)
     output = sys.stdout.getvalue()
@@ -54,7 +55,7 @@ def parse_commandline():
         '--mode',
         help=('''Which optimisation step to run.
               setup: count input reads, filter and subset samples.
-              optim_Mm: optimise M and m with n == 0. 
+              optim_Mm: optimise M and m with n == 1. 
               optim_n: optimise n for chosen M and m.
               Overridden by `--targets`'''),
         choices=['setup', 'optim_Mm', 'optim_n'],
