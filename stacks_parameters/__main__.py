@@ -15,6 +15,20 @@ import sys
 # FUNCTIONS # 
 #############
 
+# coloured text for arguments
+class colour:
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
+
+
 # graph printing
 def print_graph(snakefile, config, dag_prefix):
     # store old stdout
@@ -50,7 +64,8 @@ def print_graph(snakefile, config, dag_prefix):
 def parse_commandline():
     # command line arguments
     parser = argparse.ArgumentParser(
-        description=('Parameter optimization for Stacks'))
+        description=('Parameter optimization for Stacks'),
+        formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
         '--dryrun',
         help='Do not execute anything',
@@ -64,32 +79,36 @@ def parse_commandline():
         default=12) 
     parser.add_argument(
         '-m',
-        help=('Optimised m from optim_Mm. Minimum number of identical, '
+        help=('Optimised m from optim_Mm. Minimum number of identical,\n'
               'raw reads required to create a stack.'),
         type=str,
         dest='m',
         default=None)
     parser.add_argument(
         '-M',
-        help=('Optimised M from optim_Mm. Number of mismatches allowed '
+        help=('Optimised M from optim_Mm. Number of mismatches allowed\n'
               'between loci when processing a single individual.'),
         type=str,
         dest='M',
         default=None)
     parser.add_argument(
         '--mode',
-        help=('''Which optimisation step to run (default setup).
-              setup: count input reads, filter and subset samples.
-              optim_Mm: optimise M and m with n == 1.
-              optim_n: optimise n for chosen M and m.
-              compare_defaults: compare optimised m, M and n to defaults.
-              Overridden by `--targets`'''),
+        help=('Which optimisation step to run (default setup).\n'
+              + colour.BLUE + colour.BOLD + 'setup' + colour.END +
+              ': count input reads, filter and subset samples.\n'
+              + colour.BLUE + colour.BOLD + 'optim_Mm' + colour.END +
+              ': optimise M and m with n == 1.\n'
+              + colour.BLUE + colour.BOLD + 'optim_n' + colour.END +
+              ': optimise n for chosen M and m.\n'
+              + colour.BLUE + colour.BOLD + 'compare_defaults' + colour.END +
+              ': compare optimised m, M and n to defaults.\n'
+              'Overridden by `--targets`'),
         choices=['setup', 'optim_Mm', 'optim_n', 'compare_defaults'],
         default='setup',
         dest='mode')
     parser.add_argument(
         '-n',
-        help=('Optimised n from optim_n. Number of mismatches allowed '
+        help=('Optimised n from optim_n. Number of mismatches allowed\n'
               'between loci when building the catalog.'),
         type=str,
         dest='n',
@@ -102,8 +121,8 @@ def parse_commandline():
         default='output')
     parser.add_argument(
         'popmap',
-        help=('path to a population map file (format is "<name> TAB <pop>", '
-              'one sample per line)'),
+        help=('Path to a population map file.\n'
+              'Format is "<name> TAB <pop>", one sample per line'),
         type=str)
     parser.add_argument(
         '--replicates',
@@ -117,8 +136,8 @@ def parse_commandline():
         type=str)
     parser.add_argument(
         '--targets',
-        help=('Targets, e.g. rule or file names (default None). '
-              'Specify --targets once for each target. '
+        help=('Targets, e.g. rule or file names (default None).\n'
+              'Specify --targets once for each target.\n'
               'Overrides `--mode`'),
         type=str,
         action='append',
@@ -127,7 +146,7 @@ def parse_commandline():
     default_threads = min(os.cpu_count() // 2, 50)
     parser.add_argument(
         '--threads',
-        help=('Number of threads. Default: %i' % default_threads),
+        help=('Number of threads (default %i)' % default_threads),
         type=int,
         dest='threads',
         default=default_threads)
