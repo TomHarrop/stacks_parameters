@@ -65,9 +65,9 @@ def select_random_samples(pop_map_file,
 ###########
 
 # sampling parameters
-replicate_n = 2
+replicate_n = config['replicates']
 rep_range = list(numpy.arange(1, replicate_n + 1))
-sample_n = 16
+sample_n = config['individuals']
 
 # from config
 outdir = config['outdir']
@@ -209,6 +209,10 @@ if 'optim_Mm' in config['targets']:
             sample_stats = os.path.join(
                 outdir,
                 'run_stats/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv')
+        log:
+            log = os.path.join(
+                log_dir,
+                'parse_stacks_output_m{m}_M{M}_n{n}_rep{rep}.log')
         script:
             get_full_path('parse_stacks_output.R')
 
@@ -339,7 +343,7 @@ if 'optim_n' in config['targets']:
                 'stats_n/loci_vs_n.pdf')
 
     rule stacks_n_cov_stats:
-        input:  
+        input:
             dm_log = os.path.join(
                 outdir,
                 'stacks/m{m}/M{M}/n{n}/rep{rep}/denovo_map.log')
@@ -371,6 +375,10 @@ if 'optim_n' in config['targets']:
             sample_stats = os.path.join(
                 outdir,
                 'run_stats/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv')
+        log:
+            log = os.path.join(
+                log_dir,
+                'parse_stacks_output_m{m}_M{M}_n{n}_rep{rep}.log')
         script:
             get_full_path('parse_stacks_output.R')
 

@@ -52,25 +52,16 @@ def parse_commandline():
     parser = argparse.ArgumentParser(
         description=('Parameter optimization for Stacks'))
     parser.add_argument(
-        '--mode',
-        help=('''Which optimisation step to run.
-              setup: count input reads, filter and subset samples.
-              optim_Mm: optimise M and m with n == 1. 
-              optim_n: optimise n for chosen M and m.
-              compare_defaults: compare optimised m, M and n to defaults.
-              Overridden by `--targets`'''),
-        choices=['setup', 'optim_Mm', 'optim_n', 'compare_defaults'],
-        default=None,
-        dest='mode')
+        '--dryrun',
+        help='Do not execute anything',
+        action='store_true',
+        dest='dryrun')
     parser.add_argument(
-        '--targets',
-        help=('Targets, e.g. rule or file names (default None). '
-              'Specify --targets once for each target. '
-              'Overrides `--mode`'),
-        type=str,
-        action='append',
-        dest='targets',
-        default=None)
+        '--individuals',
+        help='Number of individuals per replicate (default 12)',
+        type=int,
+        dest='individuals',
+        default=12) 
     parser.add_argument(
         '-m',
         help=('Optimised m from optim_Mm. Minimum number of identical, '
@@ -86,6 +77,17 @@ def parse_commandline():
         dest='M',
         default=None)
     parser.add_argument(
+        '--mode',
+        help=('''Which optimisation step to run (default setup).
+              setup: count input reads, filter and subset samples.
+              optim_Mm: optimise M and m with n == 1.
+              optim_n: optimise n for chosen M and m.
+              compare_defaults: compare optimised m, M and n to defaults.
+              Overridden by `--targets`'''),
+        choices=['setup', 'optim_Mm', 'optim_n', 'compare_defaults'],
+        default='setup',
+        dest='mode')
+    parser.add_argument(
         '-n',
         help=('Optimised n from optim_n. Number of mismatches allowed '
               'between loci when building the catalog.'),
@@ -93,24 +95,35 @@ def parse_commandline():
         dest='n',
         default=None)
     parser.add_argument(
-        '--samples',
-        required=True,
-        help='path to the directory containing the samples reads files',
-        type=str,
-        dest='samples')
-    parser.add_argument(
-        '--popmap',
-        required=True,
-        help=('path to a population map file (format is "<name> TAB <pop>", '
-              'one sample per line)'),
-        type=str,
-        dest='popmap')
-    parser.add_argument(
         '-o',
         help='Output directory',
         type=str,
         dest='outdir',
         default='output')
+    parser.add_argument(
+        'popmap',
+        help=('path to a population map file (format is "<name> TAB <pop>", '
+              'one sample per line)'),
+        type=str)
+    parser.add_argument(
+        '--replicates',
+        help='Number of replicates to run (default 1).',
+        type=int,
+        dest='replicates',
+        default=1) 
+    parser.add_argument(
+        'samples',
+        help='path to the directory containing the samples reads files',
+        type=str)
+    parser.add_argument(
+        '--targets',
+        help=('Targets, e.g. rule or file names (default None). '
+              'Specify --targets once for each target. '
+              'Overrides `--mode`'),
+        type=str,
+        action='append',
+        dest='targets',
+        default=None)
     default_threads = min(os.cpu_count() // 2, 50)
     parser.add_argument(
         '--threads',
@@ -118,11 +131,6 @@ def parse_commandline():
         type=int,
         dest='threads',
         default=default_threads)
-    parser.add_argument(
-        '--dryrun',
-        help='Do not execute anything',
-        action='store_true',
-        dest='dryrun')
     args = vars(parser.parse_args())
 
     # check the arguments
@@ -148,7 +156,6 @@ def parse_commandline():
 
 def main():
     args = parse_commandline()
-    print(args)
     # set up logging
     outdir = args['outdir']
     log_dir = os.path.join(outdir, 'logs')

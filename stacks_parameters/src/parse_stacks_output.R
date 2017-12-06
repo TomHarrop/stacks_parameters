@@ -6,6 +6,10 @@ library(data.table)
 # FUNCTIONS #
 #############
 
+GenerateMessage <- function(message.text) {
+    message(paste0("[ ", date(), " ]: ", message.text))
+}
+
 ParsePopMap <- function(popmap) {
     my_pops <- fread(popmap,
                      header = FALSE,
@@ -29,6 +33,10 @@ FindSampleResultsFiles <- function(stacks_dir, samples) {
 ParseIndividualLoci <- function(stacks_dir, tag_file) {
     # Number of assembled loci:
     # for i in *.tags.tsv.gz; do zcat $i | cut -f 3 | tail -n 1; done
+    GenerateMessage(paste0("Reading ",
+                           stacks_dir,
+                           "/",
+                           tag_file))
     my_tags <- fread(paste0("zgrep -v '^#' ", stacks_dir, "/", tag_file),
                      header = FALSE,
                      sep = "\t")
@@ -38,6 +46,10 @@ ParseIndividualLoci <- function(stacks_dir, tag_file) {
 ParseIndividualPolymorphicLoci <- function(stacks_dir, allele_file) {
     # Number of polymorphic loci:
     # for i in *.alleles.tsv.gz; do zcat $i | grep -v "^#" | cut -f 3 | sort | uniq | wc -l; done
+    GenerateMessage(paste0("Reading ",
+                           stacks_dir,
+                           "/",
+                           allele_file))
     my_alleles <- fread(paste0("zgrep -v '^#' ", stacks_dir, "/", allele_file),
                         header = FALSE,
                         sep = "\t")
@@ -47,6 +59,10 @@ ParseIndividualPolymorphicLoci <- function(stacks_dir, allele_file) {
 ParseIndividualSNPs <- function(stacks_dir, snp_file) {
     # Number of SNPs:
     # for i in *.snps.tsv.gz; do zcat $i | grep -v "^#" | cut -f 5 | grep -c "E"; done
+    GenerateMessage(paste0("Reading ",
+                           stacks_dir,
+                           "/",
+                           snp_file))
     my_snps <- fread(paste0("zgrep -v '^#' ", stacks_dir, "/", snp_file),
                      header = FALSE,
                      sep = "\t")
@@ -80,12 +96,18 @@ ParsePopulationsStats <- function(stacks_dir){
     }
     
     # parse hapstats
+    GenerateMessage(paste0("Reading ",
+                           stacks_dir,
+                           "/populations.haplotypes.tsv"))
     my_hapstats <- fread(paste0("grep -v '^#' ",
                                 stacks_dir,
                                 "/populations.haplotypes.tsv"))
     my_loci <- my_hapstats[, length(unique(V1))]
     
     # parse sumstats
+    GenerateMessage(paste0("Reading ",
+                           stacks_dir,
+                           "/populations.sumstats.tsv"))
     my_sumstats <- fread(paste0("grep -v '^#' ",
                                 stacks_dir,
                                 "/populations.sumstats.tsv"))
@@ -108,10 +130,16 @@ popmap <- snakemake@input[["map"]]
 stacks_dir <- snakemake@params[["stats_dir"]]
 output_pop_stats <- snakemake@output[["pop_stats"]]
 output_sample_stats <- snakemake@output[["sample_stats"]]
+log_file <- snakemake@log[["log"]]
 
 ########
 # MAIN #
 ########
+
+# set log
+log <- file(log_file, open = "wt")
+sink(log, type = "message")
+sink(log, append = TRUE, type = "output")
 
 # get the populations summary
 population_stats <- ParsePopulationsStats(stacks_dir)
@@ -138,3 +166,5 @@ sample_stats <- sample_files[
 fwrite(population_stats, output_pop_stats)
 fwrite(sample_stats, output_sample_stats)
 
+# write session info
+sessionInfo()
