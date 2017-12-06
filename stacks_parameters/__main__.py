@@ -57,8 +57,9 @@ def parse_commandline():
               setup: count input reads, filter and subset samples.
               optim_Mm: optimise M and m with n == 1. 
               optim_n: optimise n for chosen M and m.
+              compare_defaults: compare optimised m, M and n to defaults.
               Overridden by `--targets`'''),
-        choices=['setup', 'optim_Mm', 'optim_n'],
+        choices=['setup', 'optim_Mm', 'optim_n', 'compare_defaults'],
         default=None,
         dest='mode')
     parser.add_argument(
@@ -83,6 +84,13 @@ def parse_commandline():
               'between loci when processing a single individual.'),
         type=str,
         dest='M',
+        default=None)
+    parser.add_argument(
+        '-n',
+        help=('Optimised n from optim_n. Number of mismatches allowed '
+              'between loci when building the catalog.'),
+        type=str,
+        dest='n',
         default=None)
     parser.add_argument(
         '--samples',
@@ -111,7 +119,7 @@ def parse_commandline():
         dest='threads',
         default=default_threads)
     parser.add_argument(
-        '--dryrun', '-n',
+        '--dryrun',
         help='Do not execute anything',
         action='store_true',
         dest='dryrun')
@@ -129,6 +137,12 @@ def parse_commandline():
         # check that M and m are provided if we're going to optimise n
         if not (args['m'] and args['M']):
             parser.error('Optimised m and M values are required to optimise n')
+    elif args['mode'] == 'compare_defaults':
+        args['targets'] = ['compare_defaults']
+        # check that M and m are provided if we're going to optimise n
+        if not (args['m'] and args['M'] and args['n']):
+            parser.error(('Optimised m, M  and n values are required '
+                          'to compare with the defaults'))
 
     return args
 

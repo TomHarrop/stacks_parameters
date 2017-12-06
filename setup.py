@@ -13,7 +13,7 @@ def readme():
 
 setup(
     name='stacks_parameters',
-    version='0.0.6',
+    version='0.0.7',
     description='Parameter optimization for Stacks',
     long_description=readme(),
     url='https://github.com/TomHarrop/stacks_parameters',
@@ -45,5 +45,6 @@ setup(
         'stacks_parameters/src/combine_stacks_data.R',
         'stacks_parameters/src/plot_coverage.R',
         'stacks_parameters/src/plot_stacks_output.R',
-        'stacks_parameters/src/plot_optim_n_output.R'],
+        'stacks_parameters/src/plot_optim_n_output.R',
+        'stacks_parameters/src/plot_compare_defaults.R'],
     zip_safe=False)

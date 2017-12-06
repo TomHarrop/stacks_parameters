@@ -10,8 +10,6 @@ library(data.table)
 cov_stats_file <- snakemake@input[["covstats"]]
 m_plot <- snakemake@output[["pdf"]]
 
-# cov_stats_file <- "output/stats_Mm/covstats_combined.csv"
-
 ########
 # MAIN #
 ########
