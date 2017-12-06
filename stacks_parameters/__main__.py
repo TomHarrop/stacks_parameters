@@ -68,12 +68,12 @@ def parse_commandline():
         formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
         '--dryrun',
-        help='Do not execute anything',
+        help='Do not execute anything.',
         action='store_true',
         dest='dryrun')
     parser.add_argument(
         '--individuals',
-        help='Number of individuals per replicate (default 12)',
+        help='Number of individuals per replicate (default 12).',
         type=int,
         dest='individuals',
         default=12) 
@@ -101,8 +101,9 @@ def parse_commandline():
               + colour.BLUE + colour.BOLD + 'optim_n' + colour.END +
               ': optimise n for chosen M and m.\n'
               + colour.BLUE + colour.BOLD + 'compare_defaults' + colour.END +
-              ': compare optimised m, M and n to defaults.\n'
-              'Overridden by `--targets`'),
+              ': compare optimised m, M and n to\n'
+              '                  defaults.\n'
+              'Overridden by `--targets`.'),
         choices=['setup', 'optim_Mm', 'optim_n', 'compare_defaults'],
         default='setup',
         dest='mode')
@@ -122,7 +123,7 @@ def parse_commandline():
     parser.add_argument(
         'popmap',
         help=('Path to a population map file.\n'
-              'Format is "<name> TAB <pop>", one sample per line'),
+              'Format is "<name> TAB <pop>", one sample per line.'),
         type=str)
     parser.add_argument(
         '--replicates',
@@ -132,13 +133,13 @@ def parse_commandline():
         default=1) 
     parser.add_argument(
         'samples',
-        help='path to the directory containing the samples reads files',
+        help='path to the directory containing the samples reads files.',
         type=str)
     parser.add_argument(
         '--targets',
         help=('Targets, e.g. rule or file names (default None).\n'
               'Specify --targets once for each target.\n'
-              'Overrides `--mode`'),
+              'Overrides `--mode`.'),
         type=str,
         action='append',
         dest='targets',
@@ -146,7 +147,7 @@ def parse_commandline():
     default_threads = min(os.cpu_count() // 2, 50)
     parser.add_argument(
         '--threads',
-        help=('Number of threads (default %i)' % default_threads),
+        help=('Number of threads (default %i).' % default_threads),
         type=int,
         dest='threads',
         default=default_threads)
