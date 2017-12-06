@@ -13,7 +13,7 @@ def readme():
 
 setup(
     name='stacks_parameters',
-    version='0.0.5',
+    version='0.0.6',
     description='Parameter optimization for Stacks',
     long_description=readme(),
     url='https://github.com/TomHarrop/stacks_parameters',

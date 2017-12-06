@@ -2,11 +2,11 @@
 
 library(data.table)
 
-###########
+##########
 # GLOBALS #
 ###########
 
-input_files <- unlist(snakemake@input)
+input_files <- unique(unlist(snakemake@input))
 output_files <- snakemake@output[["combined"]]
 
 ########

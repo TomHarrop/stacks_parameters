@@ -467,6 +467,16 @@ if 'optim_n' in config['targets']:
         script:
             get_full_path('plot_optim_n_output.R')
 
+####################
+# COMPARE DEFAULTS #
+####################
+
+if 'compare_defaults' in config['targets']:
+    pass
+
+
+
+
 ################
 # SHARED RULES #
 ################
