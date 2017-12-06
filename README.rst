@@ -1,7 +1,7 @@
 stacks_parameters
 =================
 
-Perform parameter optimisation following the recommendations in ``link to Parameter Space paper`` 
+Perform parameter optimisation following the recommendations in Paris, J. R., Stevens, J. R. & Catchen, J. M. Lost in parameter space: a road map for stacks. Methods Ecol Evol 8, 1360–1373 (2017). `10.1111/2041-210X.12775 <http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12775/abstract>`_.
 
 Requirements
 ------------
