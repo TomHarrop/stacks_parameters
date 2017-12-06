@@ -186,7 +186,7 @@ if 'optim_Mm' in config['targets']:
         output:
             coverage_stats = os.path.join(
                 outdir,
-                'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv')
+                'run_stats/m{m}_M{M}_n{n}_rep{rep}_coverage.csv')
         script:
             get_full_path('parse_denovo_map_logs.py')
 
@@ -205,28 +205,32 @@ if 'optim_Mm' in config['targets']:
         output:
             pop_stats = os.path.join(
                 outdir,
-                'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
+                'run_stats/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
             sample_stats = os.path.join(
                 outdir,
-                'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv')
+                'run_stats/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv')
         script:
             get_full_path('parse_stacks_output.R')
 
 
     rule stacks_Mm_combine_pop:
         input:
-            expand(os.path.join(outdir,
-                                'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
-                   m=[3, 4, 5, 6, 7],
-                   M=2,
-                   n=1,
-                   rep=rep_range),
-            expand(os.path.join(outdir,
-                                'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
-                   m=3,
-                   M=[1, 2, 3, 4, 5, 6, 7, 8],
-                   n=1,
-                   rep=rep_range)
+            expand(
+                os.path.join(
+                    outdir,
+                    'run_stats/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
+                m=[3, 4, 5, 6, 7],
+                M=2,
+                n=1,
+                rep=rep_range),
+            expand(
+                os.path.join(
+                    outdir,
+                    'run_stats/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
+                m=3,
+                M=[1, 2, 3, 4, 5, 6, 7, 8],
+                n=1,
+                rep=rep_range)
         output:
             combined = os.path.join(
                 outdir,
@@ -236,18 +240,22 @@ if 'optim_Mm' in config['targets']:
 
     rule stacks_Mm_combine_cov:
         input:
-            expand(os.path.join(outdir,
-                                'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
-                   m=[3, 4, 5, 6, 7],
-                   M=2,
-                   n=1,
-                   rep=rep_range),
-            expand(os.path.join(outdir,
-                                'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
-                   m=3,
-                   M=[1, 2, 3, 4, 5, 6, 7, 8],
-                   n=1,
-                   rep=rep_range)
+            expand(
+                os.path.join(
+                    outdir,
+                    'run_stats/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
+                m=[3, 4, 5, 6, 7],
+                M=2,
+                n=1,
+                rep=rep_range),
+            expand(
+                os.path.join(
+                    outdir,
+                    'run_stats/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
+                m=3,
+                M=[1, 2, 3, 4, 5, 6, 7, 8],
+                n=1,
+                rep=rep_range)
         output:
             combined = os.path.join(
                 outdir,
@@ -257,18 +265,22 @@ if 'optim_Mm' in config['targets']:
 
     rule stacks_Mm_combine_sample:
         input:
-            expand(os.path.join(outdir,
-                                'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
-                   m=[3, 4, 5, 6, 7],
-                   M=2,
-                   n=1,
-                   rep=rep_range),
-            expand(os.path.join(outdir,
-                                'stats_Mm/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
-                   m=3,
-                   M=[1, 2, 3, 4, 5, 6, 7, 8],
-                   n=1,
-                   rep=rep_range)
+            expand(
+                os.path.join(
+                    outdir,
+                    'run_stats/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
+                m=[3, 4, 5, 6, 7],
+                M=2,
+                n=1,
+                rep=rep_range),
+            expand(
+                os.path.join(
+                    outdir,
+                    'run_stats/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
+                m=3,
+                M=[1, 2, 3, 4, 5, 6, 7, 8],
+                n=1,
+                rep=rep_range)
         output:
             combined = os.path.join(
                 outdir,
@@ -336,7 +348,7 @@ if 'optim_n' in config['targets']:
         output:
             coverage_stats = os.path.join(
                 outdir,
-                'stats_n/m{m}_M{M}_n{n}_rep{rep}_coverage.csv')
+                'run_stats/m{m}_M{M}_n{n}_rep{rep}_coverage.csv')
         script:
             get_full_path('parse_denovo_map_logs.py')
 
@@ -355,10 +367,10 @@ if 'optim_n' in config['targets']:
         output:
             pop_stats = os.path.join(
                 outdir,
-                'stats_n/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
+                'run_stats/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
             sample_stats = os.path.join(
                 outdir,
-                'stats_n/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv')
+                'run_stats/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv')
         script:
             get_full_path('parse_stacks_output.R')
 
@@ -366,7 +378,7 @@ if 'optim_n' in config['targets']:
         input:
             expand(
                 os.path.join(outdir,
-                             'stats_n/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
+                             'run_stats/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
                 m=config['m'],
                 M=config['M'],
                 n=list(set(['1',
@@ -376,7 +388,7 @@ if 'optim_n' in config['targets']:
                 rep=rep_range),
             expand(
                 os.path.join(outdir,
-                             'stats_n/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
+                             'run_stats/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
                 m=config['m'],
                 M=config['M'],
                 n=list(set(['1',
@@ -395,7 +407,7 @@ if 'optim_n' in config['targets']:
         input:
             expand(
                 os.path.join(outdir,
-                             'stats_n/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
+                             'run_stats/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
                 m=config['m'],
                 M=config['M'],
                 n=list(set(['1',
@@ -405,7 +417,7 @@ if 'optim_n' in config['targets']:
                 rep=rep_range),
             expand(
                 os.path.join(outdir,
-                             'stats_n/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
+                             'run_stats/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
                 m=config['m'],
                 M=config['M'],
                 n=list(set(['1',
@@ -423,8 +435,9 @@ if 'optim_n' in config['targets']:
     rule stacks_n_combine_sample:
         input:
             expand(
-                os.path.join(outdir,
-                             'stats_n/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
+                os.path.join(
+                    outdir,
+                    'run_stats/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
                 m=config['m'],
                 M=config['M'],
                 n=list(set(['1',
@@ -433,8 +446,9 @@ if 'optim_n' in config['targets']:
                             str(int(config['M']) + 1)])),
                 rep=rep_range),
             expand(
-                os.path.join(outdir,
-                             'stats_n/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
+                os.path.join(
+                    outdir,
+                    'run_stats/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
                 m=config['m'],
                 M=config['M'],
                 n=list(set(['1',
@@ -472,8 +486,24 @@ if 'optim_n' in config['targets']:
 ####################
 
 if 'compare_defaults' in config['targets']:
-    pass
-
+    # combine results into "default" and "optimised" files
+    # run plots on combined files
+    
+    rule compare_default_coverage:
+        input:
+            defaults = expand(
+                os.path.join(
+                    outdir,
+                    'stats/m3_M2_n1_rep{rep}_coverage.csv'),
+                rep=rep_range),
+            optimised =  expand(
+                os.path.join(
+                    outdir,
+                    ''))
+        output:
+            ''
+        script:
+            ''
 
 
 
