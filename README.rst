@@ -1,12 +1,8 @@
 stacks_parameters
 =================
 
-Optimise the ``m``, ``M`` and ``n`` parameters\ :sup:`1` for the ``denovo_map.pl``
-pipeline of ``Stacks``\ :sup:`2`.
-
-\ :sup:`1` Paris, J. R., Stevens, J. R. & Catchen, J. M. Lost in parameter space: a road map for stacks. Methods Ecol Evol 8, 1360–1373 (2017). `10.1111/2041-210X.12775 <http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12775/abstract>`_.
-
-\ :sup:`2` Catchen, J., Hohenlohe, P. A., Bassham, S., Amores, A. & Cresko, W. A. Stacks: an analysis tool set for population genomics. Mol Ecol 22, 3124–3140 (2013). `10.1111/mec.12354 <http://onlinelibrary.wiley.com/doi/10.1111/mec.12354/abstract>`_.
+Optimise the ``m``, ``M`` and ``n`` parameters\ :sup:`1` for the
+``denovo_map.pl`` pipeline of ``Stacks``\ :sup:`2`.
 
 Requirements
 ------------
@@ -67,3 +63,14 @@ Usage
                             Specify --targets once for each target.
                             Overrides `--mode`.
       --threads THREADS     Number of threads.
+
+
+\ :sup:`1` Paris, J. R., Stevens, J. R. & Catchen, J. M. Lost in parameter
+space: a road map for stacks. Methods Ecol Evol 8, 1360–1373 (2017).
+`10.1111/2041-210X.12775
+<http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12775/abstract>`_.
+
+\ :sup:`2` Catchen, J., Hohenlohe, P. A., Bassham, S., Amores, A. & Cresko, W.
+A. Stacks: an analysis tool set for population genomics. Mol Ecol 22, 3124–3140
+(2013). `10.1111/mec.12354
+<http://onlinelibrary.wiley.com/doi/10.1111/mec.12354/abstract>`_.
