@@ -1,11 +1,11 @@
 stacks_parameters
 =================
 
-Optimise the ``m``, ``M`` and ``n`` parameters for the ``denovo_map.pl``
-pipeline of [``Stacks``].
+Optimise the ``m``, ``M`` and ``n`` parameters[1] for the ``denovo_map.pl``
+pipeline of ``Stacks``[2].
 
 
-.. _``Stacks``: Paris, J. R., Stevens, J. R. & Catchen, J. M. Lost in parameter space: a road map for stacks. Methods Ecol Evol 8, 1360–1373 (2017). `10.1111/2041-210X.12775 <http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12775/abstract>`_.
+..[1] Paris, J. R., Stevens, J. R. & Catchen, J. M. Lost in parameter space: a road map for stacks. Methods Ecol Evol 8, 1360–1373 (2017). `10.1111/2041-210X.12775 <http://onlinelibrary.wiley.com/doi/10.1111/2041-210X.12775/abstract>`_.
 
 Requirements
 ------------
