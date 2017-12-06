@@ -64,6 +64,7 @@ Usage
                             Overrides `--mode`.
       --threads THREADS     Number of threads.
 
+----------
 
 \ :sup:`1` Paris, J. R., Stevens, J. R. & Catchen, J. M. Lost in parameter
 space: a road map for stacks. Methods Ecol Evol 8, 1360–1373 (2017).
