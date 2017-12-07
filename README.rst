@@ -1,7 +1,7 @@
 stacks_parameters
 =================
 
-Optimise the ``m``, ``M`` and ``n`` parameters\ :sup:`1_` for the
+Optimise the ``m``, ``M`` and ``n`` parameters\ :sup:`1`_ for the
 ``denovo_map.pl`` pipeline of ``Stacks``\ :sup:`2`.
 
 Requirements
