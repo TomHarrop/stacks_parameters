@@ -76,4 +76,4 @@ A. Stacks: an analysis tool set for population genomics. Mol Ecol 22, 3124–314
 (2013). `10.1111/mec.12354
 <http://onlinelibrary.wiley.com/doi/10.1111/mec.12354/abstract>`_.
 
-.. _1: blah
+.. _:sup:`1`: blah
