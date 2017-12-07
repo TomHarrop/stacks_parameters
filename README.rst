@@ -1,7 +1,7 @@
 stacks_parameters
 =================
 
-Optimise the ``m``, ``M`` and ``n`` parameters\ :sup:`1`_ for the
+Optimise the ``m``, ``M`` and ``n`` parameters\ :sup:`[1]_` for the
 ``denovo_map.pl`` pipeline of ``Stacks``\ :sup:`2`.
 
 Requirements
@@ -76,4 +76,4 @@ A. Stacks: an analysis tool set for population genomics. Mol Ecol 22, 3124–314
 (2013). `10.1111/mec.12354
 <http://onlinelibrary.wiley.com/doi/10.1111/mec.12354/abstract>`_.
 
-.. _:sup:`1`: blah
+.. [1] blahdy blah
