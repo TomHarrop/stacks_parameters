@@ -113,7 +113,8 @@ rule count_reads:
         os.path.join(log_dir, 'statswrapper.log')
     run:
         in_line = ','.join(input.tag_files)
-        shell('statswrapper.sh '
+        my_statswrapper = get_full_path('statswrapper.sh')
+        shell('{my_statswrapper} '
               'in={in_line} '
               'out={output} '
               '2> {log}')
