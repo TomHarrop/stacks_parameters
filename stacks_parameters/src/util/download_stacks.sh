@@ -2,8 +2,11 @@
 
 set -eu
 
-stacks_url="http://catchenlab.life.illinois.edu/stacks/source/stacks-2.0Beta4.tar.gz"
-install_directory="$(readlink -f .)"
+stacks_url="http://catchenlab.life.illinois.edu/stacks/source/stacks-2.0Beta7c.tar.gz"
+
+# we're going to install stacks into the virtual environment
+activate="$(readlink -f "$(find . -type f -name "activate")")"
+install_directory="$(readlink -f "$(dirname "$(find . -type d -name "bin")")")"
 
 # download stacks to a temporary directory
 dl_dir="$(mktemp -p . -td XXXXX)"
@@ -17,13 +20,14 @@ stacks_src="$(find "${dl_dir}" -maxdepth 1 -mindepth 1 -type d -name "*stacks*")
 printf "stacks_src:\t%s\n" "${stacks_src}"
 export stacks_src
 export install_directory
+export activate
 (
-    printf "subshell\nstacks_src:\t%s\n" "${stacks_src}"
+    set +u
     source /opt/rh/devtoolset-6/enable
-    printf "SCL\nstacks_src:\t%s\n" "${stacks_src}"
+    source "${activate}"
     cd "${stacks_src}" || exit 1
     ./configure "--prefix=${install_directory}"
-    make
+    make -j
     make install
 )
 
