@@ -553,7 +553,7 @@ if 'compare_defaults' in config['targets']:
             expand(
                 os.path.join(
                     outdir,
-                    'run_stats/m{m}_M{m}_n{n}_rep{rep}_coverage.csv'),
+                    'run_stats/m{m}_M{M}_n{n}_rep{rep}_coverage.csv'),
                 m=config['m'],
                 M=config['M'],
                 n=config['n'],
@@ -570,7 +570,7 @@ if 'compare_defaults' in config['targets']:
             expand(
                 os.path.join(
                     outdir,
-                    'run_stats/m{m}_M{m}_n{n}_rep{rep}_popstats.csv'),
+                    'run_stats/m{m}_M{M}_n{n}_rep{rep}_popstats.csv'),
                 m=config['m'],
                 M=config['M'],
                 n=config['n'],
@@ -587,7 +587,7 @@ if 'compare_defaults' in config['targets']:
             expand(
                 os.path.join(
                     outdir,
-                    'run_stats/m{m}_M{m}_n{n}_rep{rep}_samplestats.csv'),
+                    'run_stats/m{m}_M{M}_n{n}_rep{rep}_samplestats.csv'),
                 m=config['m'],
                 M=config['M'],
                 n=config['n'],
