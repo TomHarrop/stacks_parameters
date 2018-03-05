@@ -188,9 +188,6 @@ def main():
     # print the dag
     print_graph(snakefile, args, os.path.join(log_dir, "before"))
 
-    # print args
-    print(args)
-
     # run the pipeline
     snakemake.snakemake(
         snakefile=snakefile,

@@ -46,15 +46,16 @@ def select_random_samples(pop_map_file,
     # populate the weight for each sample
     sample_weights = {}
     for sample in my_samples:
-        for key in indiv_prob:
-            if sample.lower().startswith(key):
+        for key in indiv_prob.keys():
+            if sample.lower().startswith(key.lower()):
                 sample_weights[sample] = indiv_prob[key]
     # perform weighted sample choice
     r = numpy.random.RandomState(seed)
     chosen_samples = r.choice(
         list(sample_weights.keys()),
         size=n,
-        p=list(sample_weights.values()),
+        p=list(x / sum(sample_weights.values())
+               for x in sample_weights.values()),
         replace=False)
     # done!
     return list(chosen_samples)
