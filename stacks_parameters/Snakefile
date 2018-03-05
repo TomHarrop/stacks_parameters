@@ -655,7 +655,9 @@ rule stacks:
             outdir,
             'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.log')
     params:
-        wd = 'output/stacks/m{m}/M{M}/n{n}/rep{rep}'
+        wd = os.path.join(
+            outdir,
+            'stacks/m{m}/M{M}/n{n}/rep{rep}')
     threads:
         sample_n
     log:
