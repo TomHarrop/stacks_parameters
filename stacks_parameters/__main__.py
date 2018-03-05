@@ -172,10 +172,12 @@ def parse_commandline():
             parser.error(('Optimised m, M  and n values are required '
                           'to compare with the defaults'))
 
-    return args
+    # only return non-null args
+    return {x: args[x] for x in args.keys() if args[x] is not None}
 
 def main():
     args = parse_commandline()
+
     # set up logging
     outdir = args['outdir']
     log_dir = os.path.join(outdir, 'logs')
