@@ -661,7 +661,7 @@ rule stacks:
     log:
         os.path.join(log_dir, 'stacks_m{m}_M{M}_n{n}_rep{rep}.log')
     shell:
-        'bin/denovo_map.pl '
+        'denovo_map.pl '
         '--samples {input.sample_dir} '
         '--popmap {input.map} '
         '-T {threads} '
