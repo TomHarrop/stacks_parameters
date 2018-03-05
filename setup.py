@@ -13,7 +13,7 @@ def readme():
 
 setup(
     name='stacks_parameters',
-    version='0.0.8',
+    version='0.0.9',
     description='Parameter optimization for Stacks',
     long_description=readme(),
     url='https://github.com/TomHarrop/stacks_parameters',
@@ -32,7 +32,7 @@ setup(
             ],
     },
     package_data={
-        'basecall_wrapper': [
+        'stacks_parameters': [
             'Snakefile'
         ],
         '': ['README.rst']
