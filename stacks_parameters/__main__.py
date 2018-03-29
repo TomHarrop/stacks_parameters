@@ -192,6 +192,7 @@ def main():
     snakemake.snakemake(
         snakefile=snakefile,
         config=args,
+        workdir=args['outdir'],
         cores=args['threads'],
         targets=args['targets'],
         dryrun=args['dryrun'],
