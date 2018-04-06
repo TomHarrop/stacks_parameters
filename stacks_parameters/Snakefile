@@ -23,6 +23,10 @@ def get_full_path(binary):
     return str(binary_path)
 
 
+def path_resolve(x):
+    return str(pathlib.Path(x).resolve())
+
+
 def select_random_samples(pop_map_file,
                           n,
                           seed=42):
@@ -70,12 +74,14 @@ replicate_n = config['replicates']
 rep_range = list(numpy.arange(1, replicate_n + 1))
 sample_n = config['individuals']
 
+print(config)
+
 # from config
-outdir = config['outdir']
-sample_dir = config['samples']
-popmap = config['popmap']
+outdir = path_resolve(config['outdir'])
+sample_dir = path_resolve(config['samples'])
+popmap = path_resolve(config['popmap'])
 max_threads = config['threads']
-log_dir = config['log_dir']
+log_dir = path_resolve(config['log_dir'])
 
 
 #########
@@ -659,7 +665,7 @@ rule stacks:
             outdir,
             'stacks/m{m}/M{M}/n{n}/rep{rep}')
     threads:
-        sample_n
+        max_threads
     log:
         os.path.join(log_dir, 'stacks_m{m}_M{M}_n{n}_rep{rep}.log')
     shell:

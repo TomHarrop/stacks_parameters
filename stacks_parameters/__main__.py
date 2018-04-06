@@ -4,6 +4,7 @@
 import argparse
 import io
 import os
+import pathlib
 from pkg_resources import resource_filename
 import shutil
 import snakemake
@@ -59,6 +60,10 @@ def print_graph(snakefile, config, dag_prefix):
         dag_file = '{}.dag'.format(dag_prefix)
         with open(dag_file, 'wt') as file:
             file.write(output)
+
+
+def path_resolve(x):
+    return str(pathlib.Path(x).resolve())
 
 
 def parse_commandline():
@@ -178,9 +183,20 @@ def parse_commandline():
 def main():
     args = parse_commandline()
 
+    # set up outdir
+    if not os.path.isdir(args['outdir']):
+        os.makedirs(args['outdir'])
+
+    # get full paths
+    args['outdir'] = path_resolve(args['outdir'])
+    args['samples'] = path_resolve(args['samples'])
+    args['popmap'] = path_resolve(args['popmap'])
+
     # set up logging
     outdir = args['outdir']
+    print(outdir)
     log_dir = os.path.join(outdir, 'logs')
+    print(log_dir)
     args['log_dir'] = log_dir
     if not os.path.isdir(log_dir):
         os.makedirs(log_dir)
@@ -196,7 +212,8 @@ def main():
         targets=args['targets'],
         dryrun=args['dryrun'],
         timestamp=True,
-        lock=False)
+        lock=True,
+        workdir=outdir)
 
 
 ###########
