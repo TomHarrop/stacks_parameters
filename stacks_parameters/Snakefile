@@ -654,9 +654,10 @@ rule stacks:
         populations_haplotypes = os.path.join(
             outdir,
             'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.haplotypes.tsv'),
-        dm_log = os.path.join(
-            outdir,
-            'stacks/m{m}/M{M}/n{n}/rep{rep}/denovo_map.log'),
+        dm_log = protected(
+            os.path.join(
+                outdir,
+                'stacks/m{m}/M{M}/n{n}/rep{rep}/denovo_map.log')),
         pop_log = os.path.join(
             outdir,
             'stacks/m{m}/M{M}/n{n}/rep{rep}/populations.log')
