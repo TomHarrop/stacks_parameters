@@ -213,7 +213,8 @@ def main():
         dryrun=args['dryrun'],
         timestamp=True,
         lock=True,
-        workdir=outdir)
+        workdir=outdir,
+        ignore_incomplete=True)
 
 
 ###########
