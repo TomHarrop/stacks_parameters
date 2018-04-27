@@ -66,7 +66,7 @@ ParseIndividualSNPs <- function(stacks_dir, snp_file) {
     my_snps <- fread(paste0("zgrep -v '^#' ", stacks_dir, "/", snp_file),
                      header = FALSE,
                      sep = "\t")
-    dim(my_snps[V5 == "E"])[1]
+    dim(my_snps[V4 == "E"])[1]
 }
 
 ParsePopulationsStats <- function(stacks_dir){
