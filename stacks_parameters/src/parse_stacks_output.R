@@ -40,7 +40,7 @@ ParseIndividualLoci <- function(stacks_dir, tag_file) {
     my_tags <- fread(paste0("zgrep -v '^#' ", stacks_dir, "/", tag_file),
                      header = FALSE,
                      sep = "\t")
-    my_tags[, length(unique(V3))]
+    my_tags[, length(unique(V2))]
 }
 
 ParseIndividualPolymorphicLoci <- function(stacks_dir, allele_file) {
@@ -53,7 +53,7 @@ ParseIndividualPolymorphicLoci <- function(stacks_dir, allele_file) {
     my_alleles <- fread(paste0("zgrep -v '^#' ", stacks_dir, "/", allele_file),
                         header = FALSE,
                         sep = "\t")
-    my_alleles[, length(unique(V3))]
+    my_alleles[, length(unique(V2))]
 }
 
 ParseIndividualSNPs <- function(stacks_dir, snp_file) {
