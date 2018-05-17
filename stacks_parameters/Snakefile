@@ -83,6 +83,25 @@ popmap = path_resolve(config['popmap'])
 max_threads = config['threads']
 log_dir = path_resolve(config['log_dir'])
 
+# containers
+stacks_container = ('shub://'
+                    'TomHarrop/'
+                    'singularity-containers/'
+                    'stacks_2.0b'
+                    '@099f0c7d8c8ff2baf7ad763ad7bcd17b')
+
+bbmap_container = ('shub://'
+                   'TomHarrop/'
+                   'singularity-containers/'
+                   'bbmap_38.00'
+                   '@a773baa8cc025cc5b5cbee20e507fef7')
+
+R_container = ('shub://'
+               'TomHarrop/'
+               'singularity-containers/'
+               'r_3.5.0'
+               '@758fe49cfb808d1739f6d9bb0e39250e')
+
 
 #########
 # SETUP #
