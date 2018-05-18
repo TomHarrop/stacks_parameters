@@ -24,7 +24,7 @@ setup(
     install_requires=[
         'pandas>=0.21.0',
         'numpy>=1.13.3',
-        'snakemake>=4.0.0'
+        'snakemake>=5.1.1'
     ],
     entry_points={
         'console_scripts': [
