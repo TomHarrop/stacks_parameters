@@ -70,7 +70,7 @@ Usage
                         Overrides `--mode`.
   --singularity_args SINGULARITY_ARGS
                         Arguments for singularity (default "").
-  --threads THREADS     Number of threads (default 50).
+  --threads THREADS     Number of threads.
 
 ----------
 
