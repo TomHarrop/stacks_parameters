@@ -11,7 +11,7 @@ Requirements
 * ``R`` packages ``data.table`` and ``ggplot2``
 * ``statswrapper.sh`` from the BBmap_ package
 
-If ``singularity`` is installed, ``R`` and ``BBmap`` will be pulled from SingularityHub_.
+If ``singularity`` is installed, ``stacks`` 2.0b, ``R`` 3.5.0 and ``BBmap`` 38.00 will be pulled from SingularityHub_.
 
 .. _BBmap: http://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/ 
 
