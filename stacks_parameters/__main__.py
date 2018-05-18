@@ -149,6 +149,12 @@ def parse_commandline():
         action='append',
         dest='targets',
         default=None)
+    parser.add_argument(
+        '--singularity_args',
+        help=('Arguments for singularity (default "").\n'),
+        type=str,
+        dest='singularity_args',
+        default='')
     default_threads = min(os.cpu_count() // 2, 50)
     parser.add_argument(
         '--threads',
@@ -204,6 +210,9 @@ def main():
     # print the dag
     print_graph(snakefile, args, os.path.join(log_dir, "before"))
 
+    # check if we have singularity
+    use_singularity = True if shutil.which('singularity') else False
+
     # run the pipeline
     snakemake.snakemake(
         snakefile=snakefile,
@@ -214,7 +223,9 @@ def main():
         timestamp=True,
         lock=True,
         workdir=outdir,
-        ignore_incomplete=True)
+        ignore_incomplete=True,
+        use_singularity=use_singularity,
+        singularity_args=args['singularity_args'])
 
 
 ###########

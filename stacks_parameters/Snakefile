@@ -86,19 +86,19 @@ log_dir = path_resolve(config['log_dir'])
 # containers
 stacks_container = ('shub://'
                     'TomHarrop/'
-                    'singularity-containers/'
+                    'singularity-containers:'
                     'stacks_2.0b'
                     '@099f0c7d8c8ff2baf7ad763ad7bcd17b')
 
 bbmap_container = ('shub://'
                    'TomHarrop/'
-                   'singularity-containers/'
+                   'singularity-containers:'
                    'bbmap_38.00'
                    '@a773baa8cc025cc5b5cbee20e507fef7')
 
 R_container = ('shub://'
                'TomHarrop/'
-               'singularity-containers/'
+               'singularity-containers:'
                'r_3.5.0'
                '@758fe49cfb808d1739f6d9bb0e39250e')
 
@@ -123,6 +123,7 @@ for dirpath, filenames in sample_dir_files:
         samplename = re.sub(suffix, '', filename)
         if samplename in samples:
             tag_files.append(os.path.join(dirpath, filename))
+tag_file_string = ','.join(tag_files)
 
 
 #######################
@@ -135,15 +136,17 @@ rule count_reads:
         tag_files = tag_files
     output:
         os.path.join(outdir, 'filtering/stats.txt')
+    params:
+        in_string = tag_file_string
     log:
         os.path.join(log_dir, 'statswrapper.log')
-    run:
-        in_line = ','.join(input.tag_files)
-        my_statswrapper = get_full_path('statswrapper.sh')
-        shell('{my_statswrapper} '
-              'in={in_line} '
-              'out={output} '
-              '2> {log}')
+    singularity:
+        bbmap_container
+    shell:
+        'statswrapper.sh '
+        'in={params.in_string} '
+        'out={output} '
+        '2> {log}'
 rule filter_samples:
     input:
         stats = os.path.join(outdir, 'filtering/stats.txt'),
@@ -153,6 +156,8 @@ rule filter_samples:
     output:
         map = os.path.join(outdir, 'filtering/populations.txt'),
         plot = os.path.join(outdir, 'filtering/read_count_histogram.pdf')
+    singularity:
+        R_container
     script:
         get_full_path('filter_populations_map.R')
 
@@ -240,9 +245,10 @@ if 'optim_Mm' in config['targets']:
             log = os.path.join(
                 log_dir,
                 'parse_stacks_output_m{m}_M{M}_n{n}_rep{rep}.log')
+        singularity:
+            R_container
         script:
             get_full_path('parse_stacks_output.R')
-
 
     rule stacks_Mm_combine_pop:
         input:
@@ -266,6 +272,8 @@ if 'optim_Mm' in config['targets']:
             combined = os.path.join(
                 outdir,
                 'stats_Mm/popstats_combined.csv')
+        singularity:
+            R_container
         script:
             get_full_path('combine_stacks_data.R')
 
@@ -291,6 +299,8 @@ if 'optim_Mm' in config['targets']:
             combined = os.path.join(
                 outdir,
                 'stats_Mm/covstats_combined.csv')
+        singularity:
+            R_container
         script:
             get_full_path('combine_stacks_data.R')
 
@@ -316,6 +326,8 @@ if 'optim_Mm' in config['targets']:
             combined = os.path.join(
                 outdir,
                 'stats_Mm/samplestats_combined.csv')
+        singularity:
+            R_container
         script:
             get_full_path('combine_stacks_data.R')
 
@@ -328,8 +340,10 @@ if 'optim_Mm' in config['targets']:
             pdf = os.path.join(
                 outdir,
                 'stats_Mm/coverage_vs_m.pdf')
+        singularity:
+            R_container
         script:
-            get_full_path('plot_coverage.R')        
+            get_full_path('plot_coverage.R')
 
     rule Mm_plot_loci:
         input:
@@ -346,8 +360,10 @@ if 'optim_Mm' in config['targets']:
             m = os.path.join(
                 outdir,
                 'stats_Mm/loci_vs_m.pdf')
+        singularity:
+            R_container
         script:
-            get_full_path('plot_stacks_output.R')        
+            get_full_path('plot_stacks_output.R')
 
 #########################
 # mode == optim_n RULES #
@@ -406,6 +422,8 @@ if 'optim_n' in config['targets']:
             log = os.path.join(
                 log_dir,
                 'parse_stacks_output_m{m}_M{M}_n{n}_rep{rep}.log')
+        singularity:
+            R_container
         script:
             get_full_path('parse_stacks_output.R')
 
@@ -435,6 +453,8 @@ if 'optim_n' in config['targets']:
             combined = os.path.join(
                 outdir,
                 'stats_n/popstats_combined.csv')
+        singularity:
+            R_container
         script:
             get_full_path('combine_stacks_data.R')
 
@@ -464,6 +484,8 @@ if 'optim_n' in config['targets']:
             combined = os.path.join(
                 outdir,
                 'stats_n/covstats_combined.csv')
+        singularity:
+            R_container
         script:
             get_full_path('combine_stacks_data.R')
 
@@ -495,6 +517,8 @@ if 'optim_n' in config['targets']:
             combined = os.path.join(
                 outdir,
                 'stats_n/samplestats_combined.csv')
+        singularity:
+            R_container
         script:
             get_full_path('combine_stacks_data.R')
 
@@ -513,6 +537,8 @@ if 'optim_n' in config['targets']:
             n = os.path.join(
                 outdir,
                 'stats_n/loci_vs_n.pdf')
+        singularity:
+            R_container
         script:
             get_full_path('plot_optim_n_output.R')
 
@@ -542,6 +568,8 @@ if 'compare_defaults' in config['targets']:
             combined = os.path.join(
                 outdir,
                 'compare_defaults/default_covstats_combined.csv')
+        singularity:
+            R_container
         script:
             get_full_path('combine_stacks_data.R')
 
@@ -556,6 +584,8 @@ if 'compare_defaults' in config['targets']:
             combined = os.path.join(
                 outdir,
                 'compare_defaults/default_popstats_combined.csv')
+        singularity:
+            R_container
         script:
             get_full_path('combine_stacks_data.R')
 
@@ -570,6 +600,8 @@ if 'compare_defaults' in config['targets']:
             combined = os.path.join(
                 outdir,
                 'compare_defaults/default_samplestats_combined.csv')
+        singularity:
+            R_container
         script:
             get_full_path('combine_stacks_data.R')
 
@@ -587,6 +619,8 @@ if 'compare_defaults' in config['targets']:
             combined = os.path.join(
                 outdir,
                 'compare_defaults/optimised_covstats_combined.csv')
+        singularity:
+            R_container
         script:
             get_full_path('combine_stacks_data.R')
 
@@ -604,6 +638,8 @@ if 'compare_defaults' in config['targets']:
             combined = os.path.join(
                 outdir,
                 'compare_defaults/optimised_popstats_combined.csv')
+        singularity:
+            R_container
         script:
             get_full_path('combine_stacks_data.R')
 
@@ -621,6 +657,8 @@ if 'compare_defaults' in config['targets']:
             combined = os.path.join(
                 outdir,
                 'compare_defaults/optimised_samplestats_combined.csv')
+        singularity:
+            R_container
         script:
             get_full_path('combine_stacks_data.R')
 
@@ -652,6 +690,8 @@ if 'compare_defaults' in config['targets']:
             coverage_plot = os.path.join(
                 outdir,
                 'compare_defaults/coverage_plot.pdf')
+        singularity:
+            R_container
         script:
             get_full_path('plot_compare_defaults.R')
 
@@ -688,6 +728,8 @@ rule stacks:
         max_threads
     log:
         os.path.join(log_dir, 'stacks_m{m}_M{M}_n{n}_rep{rep}.log')
+    singularity:
+        stacks_container
     shell:
         'denovo_map.pl '
         '--samples {input.sample_dir} '
