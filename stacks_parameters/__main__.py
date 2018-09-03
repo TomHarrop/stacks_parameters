@@ -220,7 +220,6 @@ def main():
         cores=args['threads'],
         targets=args['targets'],
         dryrun=args['dryrun'],
-        timestamp=True,
         lock=True,
         workdir=outdir,
         ignore_incomplete=True,
